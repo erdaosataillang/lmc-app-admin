@@ -19,6 +19,7 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .nav-btn.active { color: #2563eb !important; background-color: #eff6ff !important; font-weight: 700 !important; }
         
+        /* Toggle Switch Style */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; border-radius: 20px; }
@@ -26,8 +27,12 @@
         input:checked + .slider { background-color: #3b82f6; }
         input:checked + .slider:before { transform: translateX(20px); }
 
+        /* Modal Background Blur */
         #user-detail-modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
-        #login-screen { position: fixed; inset: 0; z-index: 100; background: #ffffff; display: flex; align-items: center; justify-content: center; }
+        
+        /* Login Screen */
+        #login-screen { position: fixed; inset: 0; z-index: 100; background: #ffffff; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
+        #login-screen.hidden { opacity: 0; pointer-events: none; }
     </style>
 </head>
 <body class="min-h-screen flex overflow-hidden">
@@ -41,20 +46,22 @@
             <h1 class="text-3xl font-extrabold tracking-tighter mb-2">LMC <span class="text-blue-600">Admin</span></h1>
             <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム</p>
             
-            <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8 text-center">
+            <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8">
                 <p class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
                 <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100">
                     <i class="fa-brands fa-line text-2xl"></i>
                     LINEでログイン
                 </button>
             </div>
+            
             <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">Authorized Personnel Only</p>
         </div>
     </div>
 
-    <!-- メインアプリケーション -->
+    <!-- メインアプリケーション (認証後に表示) -->
     <div id="admin-app" class="hidden flex w-full h-full overflow-hidden">
-        <aside class="w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm">
+        <!-- サイドバー -->
+        <aside class="w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm text-left">
             <div class="p-8">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
@@ -100,7 +107,8 @@
             </div>
         </aside>
 
-        <main class="flex-1 ml-[260px] h-screen overflow-y-auto relative">
+        <!-- メインコンテンツ -->
+        <main class="flex-1 ml-[260px] h-screen overflow-y-auto relative text-left">
             <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-5 flex justify-between items-center">
                 <div>
                     <h2 id="page-title" class="text-xl font-extrabold text-gray-800 uppercase tracking-widest">Dashboard</h2>
@@ -112,9 +120,11 @@
             </header>
 
             <div class="p-8 max-w-7xl mx-auto">
-                <!-- Dashboard -->
+                
+                <!-- 1. Dashboard -->
                 <section id="content-dashboard" class="tab-content active">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <!-- Band Stats -->
                         <div onclick="showTab('bands')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-users-rectangle text-[180px]"></i></div>
                             <div class="relative z-10">
@@ -127,6 +137,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- Cue Sheet Stats -->
                         <div onclick="showTab('cuesheets')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-file-invoice text-[180px]"></i></div>
                             <div class="relative z-10">
@@ -139,6 +150,7 @@
                                 </div>
                             </div>
                         </div>
+                        <!-- User Stats -->
                         <div onclick="showTab('users')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-user-gear text-[180px]"></i></div>
                             <div class="relative z-10">
@@ -154,7 +166,7 @@
                     </div>
                 </section>
 
-                <!-- Bands -->
+                <!-- 2. Bands -->
                 <section id="content-bands" class="tab-content">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
                         <div class="flex flex-wrap items-center justify-between gap-4">
@@ -183,13 +195,13 @@
                     </div>
                 </section>
 
-                <!-- Cue Sheets -->
+                <!-- 3. Cue Sheets -->
                 <section id="content-cuesheets" class="tab-content">
                     <div id="cuesheets-list-container" class="space-y-4">
                     </div>
                 </section>
 
-                <!-- Users -->
+                <!-- 4. Users -->
                 <section id="content-users" class="tab-content">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
                         <div class="flex flex-wrap items-center justify-between gap-4">
@@ -219,7 +231,7 @@
                     </div>
                 </section>
 
-                <!-- Booking Settings -->
+                <!-- 5. Booking Settings -->
                 <section id="content-reservation" class="tab-content">
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         <div class="lg:col-span-3 space-y-6">
@@ -230,7 +242,7 @@
                                 </div>
                                 <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Live Booking Stream</p>
                             </div>
-                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden">
+                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden text-left">
                                 <table class="w-full text-left">
                                     <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50">
                                         <tr>
@@ -302,6 +314,7 @@
         </div>
     </div>
 
+    <!-- Unified Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -335,17 +348,7 @@
             'reservation': { title: 'Booking', desc: 'スタジオ予約システム設定' }
         };
 
-        // --- Global Functions ---
-        window.updateBookingMode = (rMode) => {
-            currentBookingSettings.reservationMode = rMode;
-            renderBookingSettingsUI();
-        };
-
-        window.updateLotteryExecMode = (lMode) => {
-            currentBookingSettings.mode = lMode;
-            renderBookingSettingsUI();
-        };
-
+        // --- Global Functions (Attached to window for HTML access) ---
         window.showTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             const content = document.getElementById('content-' + tabId);
@@ -358,6 +361,16 @@
             document.getElementById('page-desc').innerText = info.desc;
         };
 
+        window.updateBookingMode = (rMode) => {
+            currentBookingSettings.reservationMode = rMode;
+            renderBookingSettingsUI();
+        };
+
+        window.updateLotteryExecMode = (lMode) => {
+            currentBookingSettings.mode = lMode;
+            renderBookingSettingsUI();
+        };
+
         window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
         window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
         window.handleUserSort = (e) => { userSortOrder = e.target.value; renderUsers(); };
@@ -365,18 +378,21 @@
         window.handleUserCurrentToggle = (e) => { userShowOnlyCurrent = e.target.checked; renderUsers(); };
         window.handleSignOut = () => { if (liff.isLoggedIn()) { liff.logout(); window.location.reload(); } };
 
-        // --- LIFF & Auth ---
+        // --- LIFF & Auth Initialization ---
         async function initApp() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
                     updateUserProfileUI(profile);
+                    
+                    // Firebase Auth
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
                     }
+                    
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('admin-app').classList.remove('hidden');
                     startDataListeners();
@@ -406,8 +422,11 @@
             if (!liff.isLoggedIn()) liff.login();
         });
 
-        // --- Data Fetching ---
+        // --- Firestore Listeners ---
         function startDataListeners() {
+            const dbStatus = document.getElementById('db-status');
+            if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Connected';
+
             onSnapshot(collection(db, 'bands'), s => { bandsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderBands(); updateStats(); });
             onSnapshot(collection(db, 'users'), s => { usersData = s.docs.map(d => ({id:d.id, ...d.data()})); renderUsers(); renderBands(); updateStats(); });
             onSnapshot(collection(db, 'bookings'), s => { bookingsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderReservations(); });
@@ -424,10 +443,9 @@
                     renderBookingSettingsUI();
                 }
             });
-            const dbStatus = document.getElementById('db-status');
-            if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Connected';
         }
 
+        // --- Rendering Logic ---
         const renderBookingSettingsUI = () => {
             const fcBtn = document.getElementById('mode-first-come');
             const ltBtn = document.getElementById('mode-lottery');
@@ -456,13 +474,15 @@
                 exAuto.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest text-center";
                 autoInputs.classList.add('hidden');
             }
-            document.getElementById('days-before').value = currentBookingSettings.daysBefore;
-            document.getElementById('exec-time').value = currentBookingSettings.time;
+            if(document.getElementById('days-before')) document.getElementById('days-before').value = currentBookingSettings.daysBefore;
+            if(document.getElementById('exec-time')) document.getElementById('exec-time').value = currentBookingSettings.time;
         };
 
         window.saveBookingSettings = async () => {
-            const dbDays = parseInt(document.getElementById('days-before').value);
-            const dbTime = document.getElementById('exec-time').value;
+            const daysInput = document.getElementById('days-before');
+            const timeInput = document.getElementById('exec-time');
+            const dbDays = parseInt(daysInput.value);
+            const dbTime = timeInput.value;
             const payload = {
                 reservationMode: currentBookingSettings.reservationMode,
                 mode: currentBookingSettings.mode,
@@ -471,7 +491,6 @@
             try { await setDoc(doc(db, 'system', 'settings'), payload, { merge: true }); } catch (e) { console.error(e); }
         };
 
-        // --- Render Lists ---
         const resolveBandMemberData = (memberIds) => {
             if (!memberIds || !Array.isArray(memberIds)) return { names: [], kanas: [] };
             const members = memberIds.map(id => usersData.find(u => u.id === id)).filter(u => u);
@@ -529,7 +548,9 @@
             filtered.sort((a,b) => (a.startTime?.seconds || 0) - (b.startTime?.seconds || 0));
             container.innerHTML = filtered.map(res => {
                 const s = res.startTime ? (typeof res.startTime.toDate === 'function' ? res.startTime.toDate() : new Date(res.startTime.seconds * 1000)) : null;
-                return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left"><td class="px-8 py-5 font-bold text-gray-800">${res.bandName || '不明'}</td><td class="px-8 py-5 text-xs text-gray-600">${s ? s.toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', weekday:'short'}) : '-'}</td><td class="px-8 py-5 text-xs text-gray-600 font-bold">${s ? s.getHours() + ":" + String(s.getMinutes()).padStart(2,'0') : '--:--'}</td><td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'合わせ':'イベント'}</span></td><td class="px-8 py-5 text-right"><span class="px-2 py-1 ${res.status==='pending'?'bg-orange-50 text-orange-600':'bg-green-50 text-green-600'} rounded text-[9px] font-bold uppercase">${res.status==='pending'?'承認待ち':'確定'}</span></td></tr>`}).join('');
+                const ds = s ? s.toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', weekday:'short'}) : '-';
+                const ts = s ? s.getHours() + ":" + String(s.getMinutes()).padStart(2,'0') : '--:--';
+                return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left"><td class="px-8 py-5 font-bold text-gray-800">${res.bandName || '不明'}</td><td class="px-8 py-5 text-xs text-gray-600">${ds}</td><td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts}</td><td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'合わせ':'イベント'}</span></td><td class="px-8 py-5 text-right"><span class="px-2 py-1 ${res.status==='pending'?'bg-orange-50 text-orange-600':'bg-green-50 text-green-600'} rounded text-[9px] font-bold uppercase">${res.status==='pending'?'承認待ち':'確定'}</span></td></tr>`}).join('');
         };
 
         window.showUserDetail = (userId) => {
@@ -569,7 +590,8 @@
             }
         };
 
-        window.onload = initApp;
+        // --- Start ---
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
