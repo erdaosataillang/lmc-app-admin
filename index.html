@@ -19,6 +19,7 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .nav-btn.active { color: #2563eb !important; background-color: #eff6ff !important; font-weight: 700 !important; }
         
+        /* Toggle Switch Style */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; border-radius: 20px; }
@@ -26,7 +27,8 @@
         input:checked + .slider { background-color: #3b82f6; }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        #user-detail-modal.active { display: flex; animation: fadeIn 0.2s ease-out; }
+        /* Modal Background Blur */
+        .modal-active { display: flex !important; animation: fadeIn 0.2s ease-out; }
         #login-screen { position: fixed; inset: 0; z-index: 100; background: #ffffff; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
         #login-screen.hidden { opacity: 0; pointer-events: none; }
     </style>
@@ -42,19 +44,21 @@
             <h1 class="text-3xl font-extrabold tracking-tighter mb-2">LMC <span class="text-blue-600">Admin</span></h1>
             <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム</p>
             
-            <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8 text-center">
+            <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8">
                 <p class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
                 <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100">
                     <i class="fa-brands fa-line text-2xl"></i>
                     LINEでログイン
                 </button>
             </div>
+            
             <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">Authorized Personnel Only</p>
         </div>
     </div>
 
-    <!-- メインアプリケーション -->
+    <!-- メインアプリケーション (認証後に表示) -->
     <div id="admin-app" class="hidden flex w-full h-full overflow-hidden">
+        <!-- サイドバー -->
         <aside class="w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm text-left">
             <div class="p-8">
                 <div class="flex items-center gap-3">
@@ -113,7 +117,7 @@
                 </div>
             </header>
 
-            <div class="p-8 max-w-7xl mx-auto">
+            <div class="p-8 max-w-7xl mx-auto text-left">
                 <!-- 1. Dashboard Section -->
                 <section id="content-dashboard" class="tab-content active">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -137,7 +141,7 @@
                                 <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed">提出されたPA・照明要望をチェック。セトリや機材配置を現場担当者と共有します。</p>
                                 <div class="flex items-center justify-between">
                                     <span class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest"><span id="stat-cue-count">0</span> Submitted</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-blue-600 transition-colors"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 transition-colors"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -157,7 +161,7 @@
                 </section>
 
                 <!-- 2. Bands Management Section -->
-                <section id="content-bands" class="tab-content">
+                <section id="content-bands" class="tab-content text-left">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all">
@@ -188,13 +192,13 @@
                 </section>
 
                 <!-- 3. Cue Sheets Section -->
-                <section id="content-cuesheets" class="tab-content">
+                <section id="content-cuesheets" class="tab-content text-left">
                     <div id="cuesheets-list-container" class="space-y-4">
                     </div>
                 </section>
 
                 <!-- 4. Users Section -->
-                <section id="content-users" class="tab-content">
+                <section id="content-users" class="tab-content text-left">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
                         <div class="flex flex-wrap items-center justify-between gap-4">
                             <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all">
@@ -223,65 +227,65 @@
                     </div>
                 </section>
 
-                <!-- 5. Reservation Section -->
-                <section id="content-reservation" class="tab-content">
+                <!-- 5. Booking Settings Section -->
+                <section id="content-reservation" class="tab-content text-left">
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
                         <div class="lg:col-span-3 space-y-6">
-                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 flex items-center justify-between text-left">
+                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 flex items-center justify-between text-left text-left">
                                 <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl">
-                                    <i class="fa-solid fa-filter text-gray-300 text-xs"></i>
-                                    <input type="date" id="res-date-filter" onchange="handleResDateFilter(event)" class="bg-transparent border-none outline-none text-xs font-bold text-gray-600 cursor-pointer">
+                                    <i class="fa-solid fa-filter text-gray-300 text-xs text-left"></i>
+                                    <input type="date" id="res-date-filter text-left" onchange="handleResDateFilter(event)" class="bg-transparent border-none outline-none text-xs font-bold text-gray-600 cursor-pointer">
                                 </div>
-                                <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">Live Booking Stream</p>
+                                <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">Live Booking Stream</p>
                             </div>
                             <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden">
                                 <table class="w-full text-left">
-                                    <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50">
+                                    <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50 text-left">
                                         <tr>
                                             <th class="px-8 py-5">バンド名</th>
                                             <th class="px-8 py-5">日付</th>
                                             <th class="px-8 py-5">予約時間</th>
                                             <th class="px-8 py-5">タイプ</th>
-                                            <th class="px-8 py-5 text-right">状態</th>
+                                            <th class="px-8 py-5 text-right text-left">状態</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="reservations-list-body" class="text-sm">
+                                    <tbody id="reservations-list-body" class="text-sm text-left">
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class="lg:col-span-1 space-y-6">
-                            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100">
-                                <h4 class="font-extrabold text-gray-800 mb-6 uppercase text-xs tracking-[0.1em] border-b border-gray-50 pb-4">予約システム設定</h4>
-                                <div class="space-y-6">
+                        <div class="lg:col-span-1 space-y-6 text-left">
+                            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-left">
+                                <h4 class="font-extrabold text-gray-800 mb-6 uppercase text-xs tracking-[0.1em] border-b border-gray-50 pb-4 text-left">予約システム設定</h4>
+                                <div class="space-y-6 text-left">
                                     <div>
                                         <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left">予約受付モード</label>
-                                        <div class="flex bg-gray-100 p-1 rounded-2xl text-center">
-                                            <button onclick="updateBookingMode('first_come')" id="mode-first-come" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all">先着順</button>
-                                            <button onclick="updateBookingMode('lottery')" id="mode-lottery" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all">抽選制</button>
+                                        <div class="flex bg-gray-100 p-1 rounded-2xl text-center text-left">
+                                            <button onclick="updateBookingMode('first_come')" id="mode-first-come text-left" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">先着順</button>
+                                            <button onclick="updateBookingMode('lottery')" id="mode-lottery text-left" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">抽選制</button>
                                         </div>
                                     </div>
 
                                     <!-- 抽選制の詳細設定 -->
-                                    <div id="lottery-settings-panel" class="hidden space-y-6 border-t border-gray-50 pt-6 animate-in fade-in duration-300">
+                                    <div id="lottery-settings-panel" class="hidden space-y-6 border-t border-gray-50 pt-6 animate-in fade-in duration-300 text-left">
                                         <div>
                                             <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left">抽選実行モード</label>
-                                            <div class="flex bg-gray-100 p-1 rounded-2xl text-center">
-                                                <button onclick="updateLotteryExecMode('auto')" id="exec-auto" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all">自動実行</button>
-                                                <button onclick="updateLotteryExecMode('manual')" id="exec-manual" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all">手動実行</button>
+                                            <div class="flex bg-gray-100 p-1 rounded-2xl text-center text-left text-left">
+                                                <button onclick="updateLotteryExecMode('auto')" id="exec-auto text-left text-left" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center">自動実行</button>
+                                                <button onclick="updateLotteryExecMode('manual')" id="exec-manual text-left text-left" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center">手動実行</button>
                                             </div>
                                         </div>
-                                        <div id="auto-lottery-inputs" class="space-y-4">
+                                        <div id="auto-lottery-inputs" class="space-y-4 text-left text-left">
                                             <div>
                                                 <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left">実行タイミング (何日前)</label>
-                                                <div class="relative">
-                                                    <input type="number" id="days-before" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left" placeholder="7">
-                                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400">日前</span>
+                                                <div class="relative text-left">
+                                                    <input type="number" id="days-before text-left text-left" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left" placeholder="7">
+                                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 text-left text-left">日前</span>
                                                 </div>
                                             </div>
                                             <div>
                                                 <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left">実行時間</label>
-                                                <input type="time" id="exec-time" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left">
+                                                <input type="time" id="exec-time text-left text-left" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left">
                                             </div>
                                         </div>
                                     </div>
@@ -296,19 +300,28 @@
         </main>
     </div>
 
+    <!-- Modals -->
     <!-- User Detail Modal -->
-    <div id="user-detail-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 overflow-y-auto text-left">
-        <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200">
+    <div id="user-detail-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left">
             <button onclick="closeUserDetail()" class="absolute top-6 right-6 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-10 text-center">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <div id="user-modal-content">
-                <!-- Dynamic Content -->
-            </div>
+            <div id="user-modal-content"></div>
         </div>
     </div>
 
-    <!-- Firebase & Logic Integrated -->
+    <!-- Band Detail Modal -->
+    <div id="band-detail-modal" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-6 overflow-y-auto">
+        <div class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left">
+            <button onclick="closeBandDetail()" class="absolute top-6 right-6 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-10 text-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="band-modal-content"></div>
+        </div>
+    </div>
+
+    <!-- Logic Consolidated -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -342,7 +355,7 @@
             'reservation': { title: 'Booking', desc: 'スタジオ予約システム設定' }
         };
 
-        // --- Global Functions (Explicitly attached to window) ---
+        // --- Tab Management ---
         window.showTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             const content = document.getElementById('content-' + tabId);
@@ -355,23 +368,6 @@
             document.getElementById('page-desc').innerText = info.desc;
         };
 
-        window.updateBookingMode = (rMode) => {
-            currentBookingSettings.reservationMode = rMode;
-            renderBookingSettingsUI();
-        };
-
-        window.updateLotteryExecMode = (lMode) => {
-            currentBookingSettings.mode = lMode;
-            renderBookingSettingsUI();
-        };
-
-        window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
-        window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
-        window.handleUserSort = (e) => { userSortOrder = e.target.value; renderUsers(); };
-        window.handleResDateFilter = (e) => { reservationDateFilter = e.target.value; renderReservations(); };
-        window.handleUserCurrentToggle = (e) => { userShowOnlyCurrent = e.target.checked; renderUsers(); };
-        window.handleSignOut = () => { if (liff.isLoggedIn()) { liff.logout(); window.location.reload(); } };
-
         // --- LIFF & Auth Flow ---
         async function initApp() {
             try {
@@ -379,13 +375,11 @@
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
                     updateUserProfileUI(profile);
-                    
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
                     }
-                    
                     document.getElementById('login-screen').classList.add('hidden');
                     document.getElementById('admin-app').classList.remove('hidden');
                     startDataListeners();
@@ -412,7 +406,11 @@
             if (!liff.isLoggedIn()) liff.login();
         });
 
-        // --- Firestore Live Data ---
+        window.handleSignOut = () => {
+            if (liff.isLoggedIn()) { liff.logout(); window.location.reload(); }
+        };
+
+        // --- Firestore Listeners ---
         function startDataListeners() {
             const dbStatus = document.getElementById('db-status');
             if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Connected';
@@ -435,54 +433,11 @@
             });
         }
 
-        // --- Render UI Components ---
-        const renderBookingSettingsUI = () => {
-            const fcBtn = document.getElementById('mode-first-come');
-            const ltBtn = document.getElementById('mode-lottery');
-            const ltPanel = document.getElementById('lottery-settings-panel');
-            if(!fcBtn || !ltBtn) return;
-            
-            if (currentBookingSettings.reservationMode === 'first_come') {
-                fcBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shadow-sm";
-                ltBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:text-gray-600";
-                ltPanel.classList.add('hidden');
-            } else {
-                ltBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shadow-sm";
-                fcBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:text-gray-600";
-                ltPanel.classList.remove('hidden');
-            }
-
-            const exAuto = document.getElementById('exec-auto');
-            const exManual = document.getElementById('exec-manual');
-            const autoInputs = document.getElementById('auto-lottery-inputs');
-            if (currentBookingSettings.mode === 'auto') {
-                exAuto.className = "flex-1 bg-white text-indigo-600 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest shadow-sm";
-                exManual.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest";
-                autoInputs.classList.remove('hidden');
-            } else {
-                exManual.className = "flex-1 bg-white text-indigo-600 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest shadow-sm";
-                exAuto.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest";
-                autoInputs.classList.add('hidden');
-            }
-            if(document.getElementById('days-before')) document.getElementById('days-before').value = currentBookingSettings.daysBefore;
-            if(document.getElementById('exec-time')) document.getElementById('exec-time').value = currentBookingSettings.time;
-        };
-
-        window.saveBookingSettings = async () => {
-            const dbDays = parseInt(document.getElementById('days-before').value);
-            const dbTime = document.getElementById('exec-time').value;
-            const payload = {
-                reservationMode: currentBookingSettings.reservationMode,
-                mode: currentBookingSettings.mode,
-                lotteryConfig: { mode: currentBookingSettings.mode, daysBefore: dbDays, time: dbTime }
-            };
-            try { await setDoc(doc(db, 'system', 'settings'), payload, { merge: true }); } catch (e) { console.error(e); }
-        };
-
+        // --- Render Lists ---
         const resolveBandMemberData = (memberIds) => {
             if (!memberIds || !Array.isArray(memberIds)) return { names: [], kanas: [] };
             const members = memberIds.map(id => usersData.find(u => u.id === id)).filter(u => u);
-            return { names: members.map(u => u.name || ""), kanas: members.map(u => u.kana || "") };
+            return { names: members.map(u => u.name || ""), kanas: members.map(u => u.kana || ""), full: members };
         };
 
         window.renderBands = () => {
@@ -495,14 +450,14 @@
                 return (b.name||"").toLowerCase().includes(q) || (b.id||"").toLowerCase().includes(q) || m.names.some(n=>n.toLowerCase().includes(q)) || m.kanas.some(k=>k.toLowerCase().includes(q));
             });
             container.innerHTML = filtered.map(band => {
-                const members = (band.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "Unknown").join(', ');
-                return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left">
+                const memberNames = (band.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "Unknown").join(', ');
+                return `<tr onclick="showBandDetail('${band.id}')" class="cursor-pointer hover:bg-gray-50 border-b border-gray-50 text-left">
                     <td class="px-8 py-5 flex items-center gap-3">
                         ${band.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-lg object-cover">` : `<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold">${(band.name||"?")[0]}</div>`}
                         <div><span class="font-bold text-gray-800 block">${band.name || 'No Name'}</span><span class="text-[9px] text-gray-400 font-bold uppercase">ID: ${band.id.substring(0,8)}</span></div>
                     </td>
-                    <td class="px-8 py-5 text-xs text-gray-500 font-medium">${members}</td>
-                    <td class="px-8 py-5 text-left">${band.latestCuesheetUrl ? `<a href="${band.latestCuesheetUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-200 transition gap-1.5"><i class="fa-solid fa-file-pdf"></i> 開く</a>` : `<span class="text-gray-300 text-[10px] font-bold">未提出</span>`}</td>
+                    <td class="px-8 py-5 text-xs text-gray-500 font-medium">${memberNames}</td>
+                    <td class="px-8 py-5 text-left">${band.latestCuesheetUrl ? `<a href="${band.latestCuesheetUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-200 transition gap-1.5" onclick="event.stopPropagation()"><i class="fa-solid fa-file-pdf"></i> 開く</a>` : `<span class="text-gray-300 text-[10px] font-bold">未提出</span>`}</td>
                     <td class="px-8 py-5 text-right"><button class="text-blue-600 font-bold text-xs hover:underline">Edit</button></td>
                 </tr>`}).join('');
         };
@@ -555,6 +510,7 @@
                 </tr>`}).join('');
         };
 
+        // --- Modals Logic ---
         window.showUserDetail = (userId) => {
             const user = usersData.find(u => u.id === userId);
             if (!user) return;
@@ -567,17 +523,136 @@
                 const d = typeof user.birthday.toDate === 'function' ? user.birthday.toDate() : (user.birthday.seconds ? new Date(user.birthday.seconds * 1000) : new Date(user.birthday));
                 bdayStr = d.toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' });
             }
-            content.innerHTML = `<div class="bg-gradient-to-br from-indigo-500 to-blue-600 h-32 w-full"></div><div class="px-8 pb-10 -mt-16 text-left"><div class="flex items-end justify-between mb-6"><div class="relative">${user.icon ? `<img src="${user.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl object-cover bg-white">` : `<div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center text-4xl font-bold text-indigo-50 text-center">${(user.name||"?")[0]}</div>`}</div></div><div class="mb-8"><h3 class="text-3xl font-extrabold text-gray-800">${user.name || 'Guest'}</h3><p class="text-indigo-500 font-bold text-sm mt-1 tracking-wider uppercase">${user.kana || ''}</p></div><div class="grid grid-cols-2 gap-6 mb-8"><div class="space-y-1 text-left"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">学籍番号</p><p class="font-bold text-gray-700">${user.studentId || '-'}</p></div><div class="space-y-1 text-left"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">パート</p><p class="font-bold text-gray-700">${partsStr}</p></div><div class="space-y-1 text-left"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">誕生日</p><p class="font-bold text-gray-700">${bdayStr}</p></div><div class="space-y-1 text-left"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">役割</p><p class="font-bold text-gray-700">${user.role || 'Member'}</p></div></div><div class="space-y-4 text-left"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">所属バンド</p><div class="flex flex-wrap gap-2">${userBands.length > 0 ? userBands.map(b => `<div class="flex items-center gap-2 bg-gray-50 border border-gray-100 px-4 py-2 rounded-2xl shadow-sm text-left"><div class="w-5 h-5 bg-indigo-100 rounded-lg flex items-center justify-center text-[10px] font-bold text-indigo-600 text-center">${(b.name || "?")[0]}</div><span class="text-sm font-bold text-gray-600">${b.name}</span></div>`).join('') : '<p class="text-xs text-gray-400 font-medium">所属しているバンドはありません</p>'}</div></div></div>`;
-            modal.classList.remove('hidden');
-            modal.classList.add('active');
+            content.innerHTML = `
+                <div class="bg-gradient-to-br from-indigo-500 to-blue-600 h-32 w-full text-left"></div>
+                <div class="px-8 pb-10 -mt-16 text-left">
+                    <div class="flex items-end justify-between mb-6">
+                        <div class="relative">
+                            ${user.icon ? `<img src="${user.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl object-cover bg-white">` : `<div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center text-4xl font-bold text-indigo-50">${(user.name||"?")[0]}</div>`}
+                        </div>
+                    </div>
+                    <div class="mb-8"><h3 class="text-3xl font-extrabold text-gray-800">${user.name || 'Guest'}</h3><p class="text-indigo-500 font-bold text-sm mt-1 tracking-wider uppercase">${user.kana || ''}</p></div>
+                    <div class="grid grid-cols-2 gap-6 mb-8 text-left">
+                        <div class="space-y-1"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">学籍番号</p><p class="font-bold text-gray-700">${user.studentId || '-'}</p></div>
+                        <div class="space-y-1"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">パート</p><p class="font-bold text-gray-700">${partsStr}</p></div>
+                        <div class="space-y-1"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">誕生日</p><p class="font-bold text-gray-700">${bdayStr}</p></div>
+                        <div class="space-y-1"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">役割</p><p class="font-bold text-gray-700">${user.role || 'Member'}</p></div>
+                    </div>
+                    <div class="space-y-4">
+                        <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">所属バンド</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${userBands.length > 0 ? userBands.map(b => `<div class="flex items-center gap-2 bg-gray-50 border border-gray-100 px-4 py-2 rounded-2xl shadow-sm"><div class="w-5 h-5 bg-indigo-100 rounded-lg flex items-center justify-center text-[10px] font-bold text-indigo-600">${(b.name || "?")[0]}</div><span class="text-sm font-bold text-gray-600">${b.name}</span></div>`).join('') : '<p class="text-xs text-gray-400 font-medium">所属しているバンドはありません</p>'}
+                        </div>
+                    </div>
+                </div>`;
+            modal.classList.add('modal-active');
         };
 
-        window.closeUserDetail = () => {
-            const modal = document.getElementById('user-detail-modal');
-            modal.classList.add('hidden');
-            modal.classList.remove('active');
+        window.closeUserDetail = () => { document.getElementById('user-detail-modal').classList.remove('modal-active'); };
+
+        window.showBandDetail = (bandId) => {
+            const band = bandsData.find(b => b.id === bandId);
+            if (!band) return;
+            const modal = document.getElementById('band-detail-modal');
+            const content = document.getElementById('band-modal-content');
+            const memberData = resolveBandMemberData(band.memberIds);
+            
+            content.innerHTML = `
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full text-left"></div>
+                <div class="px-8 pb-10 -mt-16 text-left">
+                    <div class="relative mb-6">
+                        ${band.icon ? `<img src="${band.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl object-cover bg-white">` : `<div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center text-4xl font-bold text-blue-500">${(band.name||"?")[0]}</div>`}
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">バンド名</label>
+                            <input type="text" id="edit-band-name" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all" value="${band.name || ''}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">アイコンURL</label>
+                            <input type="text" id="edit-band-icon" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all" value="${band.icon || ''}" placeholder="https://...">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-4">メンバー構成</label>
+                            <div class="space-y-2">
+                                ${memberData.full.map(m => `
+                                    <div class="flex items-center justify-between bg-gray-50 p-3 rounded-2xl border border-gray-100">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">${m.name[0]}</div>
+                                            <div>
+                                                <p class="text-xs font-bold text-gray-800">${m.name}</p>
+                                                <p class="text-[9px] text-gray-400 font-bold uppercase">${m.studentId || '-'} | ${Array.isArray(m.part) ? m.part.join(', ') : (m.part || '-')}</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        <div class="pt-4 flex gap-4">
+                            <button onclick="saveBandChanges('${band.id}')" class="flex-1 bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-gray-100">設定を保存する</button>
+                        </div>
+                    </div>
+                </div>`;
+            modal.classList.add('modal-active');
         };
 
+        window.saveBandChanges = async (bandId) => {
+            const name = document.getElementById('edit-band-name').value;
+            const icon = document.getElementById('edit-band-icon').value;
+            try {
+                await updateDoc(doc(db, 'bands', bandId), { name, icon });
+                closeBandDetail();
+            } catch (e) { console.error(e); }
+        };
+
+        window.closeBandDetail = () => { document.getElementById('band-detail-modal').classList.remove('modal-active'); };
+
+        // --- System Settings ---
+        const renderBookingSettingsUI = () => {
+            const fcBtn = document.getElementById('mode-first-come');
+            const ltBtn = document.getElementById('mode-lottery');
+            const ltPanel = document.getElementById('lottery-settings-panel');
+            if(!fcBtn || !ltBtn) return;
+            
+            if (currentBookingSettings.reservationMode === 'first_come') {
+                fcBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shadow-sm text-center";
+                ltBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:text-gray-600 text-center";
+                ltPanel.classList.add('hidden');
+            } else {
+                ltBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shadow-sm text-center";
+                fcBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest hover:text-gray-600 text-center";
+                ltPanel.classList.remove('hidden');
+            }
+
+            const exAuto = document.getElementById('exec-auto');
+            const exManual = document.getElementById('exec-manual');
+            const autoInputs = document.getElementById('auto-lottery-inputs');
+            if (currentBookingSettings.mode === 'auto') {
+                exAuto.className = "flex-1 bg-white text-indigo-600 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest shadow-sm text-center";
+                exManual.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest text-center";
+                autoInputs.classList.remove('hidden');
+            } else {
+                exManual.className = "flex-1 bg-white text-indigo-600 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest shadow-sm text-center";
+                exAuto.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest text-center";
+                autoInputs.classList.add('hidden');
+            }
+            if(document.getElementById('days-before')) document.getElementById('days-before').value = currentBookingSettings.daysBefore;
+            if(document.getElementById('exec-time')) document.getElementById('exec-time').value = currentBookingSettings.time;
+        };
+
+        window.saveBookingSettings = async () => {
+            const dbDays = parseInt(document.getElementById('days-before').value);
+            const dbTime = document.getElementById('exec-time').value;
+            const payload = {
+                reservationMode: currentBookingSettings.reservationMode,
+                mode: currentBookingSettings.mode,
+                lotteryConfig: { mode: currentBookingSettings.mode, daysBefore: dbDays, time: dbTime }
+            };
+            try { await setDoc(doc(db, 'system', 'settings'), payload, { merge: true }); } catch (e) { console.error(e); }
+        };
+
+        // --- Helper Stats ---
         const updateStats = () => {
             const b = document.getElementById('stat-band-count'), c = document.getElementById('stat-cue-count'), u = document.getElementById('stat-user-count');
             if(b) b.innerText = bandsData.filter(x => !x.isArchived).length;
@@ -594,6 +669,13 @@
 
         // --- Start ---
         document.addEventListener('DOMContentLoaded', initApp);
+
+        // UI Event Handlers
+        window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
+        window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
+        window.handleUserSort = (e) => { userSortOrder = e.target.value; renderUsers(); };
+        window.handleResDateFilter = (e) => { reservationDateFilter = e.target.value; renderReservations(); };
+        window.handleUserCurrentToggle = (e) => { userShowOnlyCurrent = e.target.checked; renderUsers(); };
     </script>
 </body>
 </html>
