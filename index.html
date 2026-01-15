@@ -29,8 +29,8 @@
 </head>
 <body class="min-h-screen flex overflow-hidden">
 
-    <!-- ログイン画面 -->
-    <div id="login-screen">
+    <!-- ログイン画面 (デバッグ用にデフォルトで非表示) -->
+    <div id="login-screen" class="hidden">
         <div class="max-w-md w-full px-8 py-12 text-center">
             <div class="w-20 h-20 bg-blue-600 rounded-[24px] flex items-center justify-center text-white shadow-2xl shadow-blue-200 mx-auto mb-8">
                 <i class="fa-solid fa-guitar text-4xl"></i>
@@ -39,7 +39,7 @@
             <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム</p>
             
             <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8 text-center">
-                <p id="login-status-msg" class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
+                <p id="login-status-msg" class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">開発用バイパスモード有効</p>
                 <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100 disabled:opacity-50">
                     <i class="fa-brands fa-line text-2xl"></i> <span id="btn-text">LINEでログイン</span>
                 </button>
@@ -47,8 +47,8 @@
         </div>
     </div>
 
-    <!-- メインアプリケーション -->
-    <div id="admin-app" class="hidden flex w-full h-full overflow-hidden">
+    <!-- メインアプリケーション (最初から表示) -->
+    <div id="admin-app" class="flex w-full h-full overflow-hidden">
         <aside class="w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm text-left">
             <div class="p-8">
                 <div class="flex items-center gap-3">
@@ -57,7 +57,7 @@
                     </div>
                     <div>
                         <h1 class="text-xl font-extrabold tracking-tighter leading-none">LMC <span class="text-blue-600">Admin</span></h1>
-                        <p class="text-[9px] text-gray-400 uppercase font-bold tracking-[0.2em] mt-1 leading-none">Control Panel</p>
+                        <p class="text-[9px] text-gray-400 uppercase font-bold tracking-[0.2em] mt-1 leading-none">Debug Mode</p>
                     </div>
                 </div>
             </div>
@@ -83,10 +83,10 @@
 
             <div class="p-6 border-t border-gray-100">
                 <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-2xl">
-                    <div id="user-avatar" class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold shadow-inner overflow-hidden text-xs">?</div>
+                    <div id="user-avatar" class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold shadow-inner overflow-hidden text-xs">D</div>
                     <div class="flex-1 min-w-0">
-                        <p id="user-display-name" class="text-sm font-bold text-gray-800 truncate">Loading...</p>
-                        <p class="text-[10px] text-gray-500 font-medium tracking-tight">Admin Panel</p>
+                        <p id="user-display-name" class="text-sm font-bold text-gray-800 truncate">Developer</p>
+                        <p class="text-[10px] text-gray-500 font-medium tracking-tight">Admin Panel (Bypass)</p>
                     </div>
                     <button onclick="handleSignOut()" class="text-gray-300 hover:text-red-500 transition-colors p-1">
                         <i class="fa-solid fa-right-from-bracket"></i>
@@ -99,7 +99,7 @@
             <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-5 flex justify-between items-center">
                 <div>
                     <h2 id="page-title" class="text-xl font-extrabold text-gray-800 uppercase tracking-widest">Dashboard</h2>
-                    <p id="page-desc" class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">System Operational</p>
+                    <p id="page-desc" class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">Debug Mode Enabled</p>
                 </div>
                 <div id="db-status" class="flex items-center gap-3 text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
                     <i id="status-icon" class="fa-solid fa-circle text-[8px] text-gray-300"></i> <span id="status-text">Connecting</span>
@@ -204,42 +204,33 @@
         let currentUser = null;
 
         /**
-         * アプリの初期化
+         * アプリの初期化 (バイパスモード)
          */
         async function init() {
-            const loginBtn = document.getElementById('line-login-btn');
-            const btnText = document.getElementById('btn-text');
-            
-            try {
-                await liff.init({ liffId: LIFF_ID });
+            // LINEログインを待たずにUIを表示
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('admin-app').classList.remove('hidden');
 
+            try {
+                // LIFFの初期化は試みるが、失敗しても無視する
+                await liff.init({ liffId: LIFF_ID });
                 if (liff.isLoggedIn()) {
-                    // ログイン状態であればすぐにメイン画面に切り替え（ローディング表示）
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('admin-app').classList.remove('hidden');
-                    
-                    // プロフィール取得
                     const profile = await liff.getProfile();
                     document.getElementById('user-display-name').innerText = profile.displayName;
                     if (profile.pictureUrl) {
                         document.getElementById('user-avatar').innerHTML = `<img src="${profile.pictureUrl}" class="w-full h-full object-cover">`;
                     }
-
-                    // Firebase認証実行 (Rule 3)
-                    await authenticateFirebase();
-                } else {
-                    // ログインしていない場合
-                    document.getElementById('login-screen').classList.remove('hidden');
-                    document.getElementById('admin-app').classList.add('hidden');
                 }
-            } catch (error) {
-                console.error("LIFF Init Error:", error);
-                document.getElementById('login-screen').classList.remove('hidden');
+            } catch (e) {
+                console.warn("LIFF init skipped or failed in debug mode.");
             }
+
+            // Firebase認証は必須 (Rule 3)
+            await authenticateFirebase();
         }
 
         /**
-         * Firebase認証 (Rule 3 準拠)
+         * Firebase認証 (バックグラウンド実行)
          */
         async function authenticateFirebase() {
             try {
@@ -249,7 +240,6 @@
                     await signInAnonymously(auth);
                 }
                 
-                // 認証成功後にリスナーを開始
                 onAuthStateChanged(auth, (user) => {
                     if (user) {
                         currentUser = user;
@@ -264,12 +254,12 @@
         }
 
         /**
-         * Firestore監視 (Rule 1 準拠: /artifacts/{appId}/public/data/{collection})
+         * Firestore監視
          */
         function startFirestoreListeners() {
             if (!currentUser) return;
 
-            // Bands (Strict Path)
+            // Bands
             const bandsRef = collection(db, 'artifacts', appId, 'public', 'data', 'bands');
             onSnapshot(bandsRef, (snapshot) => {
                 bandsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -277,7 +267,7 @@
                 document.getElementById('stat-band-count').innerText = bandsData.length;
             }, (err) => console.error("Bands Listener Error:", err));
 
-            // Users (Strict Path)
+            // Users
             const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
             onSnapshot(usersRef, (snapshot) => {
                 usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
@@ -285,18 +275,15 @@
             }, (err) => console.error("Users Listener Error:", err));
         }
 
-        /**
-         * UI更新ユーティリティ
-         */
         function updateStatus(connected) {
             const icon = document.getElementById('status-icon');
             const text = document.getElementById('status-text');
             if (connected) {
                 icon.className = "fa-solid fa-circle text-[8px] text-green-500";
-                text.innerText = "Connected";
+                text.innerText = "Connected (Bypass)";
             } else {
                 icon.className = "fa-solid fa-circle text-[8px] text-red-500";
-                text.innerText = "Disconnected";
+                text.innerText = "Auth Error";
             }
         }
 
@@ -349,13 +336,6 @@
                     </div>
                 </div>`).join('');
         };
-
-        // Event Listeners
-        document.getElementById('line-login-btn').addEventListener('click', () => {
-            document.getElementById('btn-text').innerHTML = '認証中<span class="loading-dots"></span>';
-            document.getElementById('line-login-btn').disabled = true;
-            liff.login({ redirectUri: window.location.href });
-        });
 
         // Search logic
         document.getElementById('band-search-input')?.addEventListener('input', (e) => {
