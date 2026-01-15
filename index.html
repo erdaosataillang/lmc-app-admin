@@ -382,14 +382,18 @@
                     <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">予約バンド</label>
                     <select id="new-booking-band-id" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all"></select>
                 </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">日付</label>
+                    <input type="date" id="new-booking-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+                </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">日付</label>
-                        <input type="date" id="new-booking-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
-                    </div>
                     <div>
                         <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">開始時間</label>
                         <input type="time" id="new-booking-time" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+                    </div>
+                    <div>
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">終了時間</label>
+                        <input type="time" id="new-booking-end-time" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
                     </div>
                 </div>
                 <div>
@@ -614,12 +618,14 @@
             filtered.sort((a,b) => (a.startTime?.seconds || 0) - (b.startTime?.seconds || 0));
             container.innerHTML = filtered.map(res => {
                 const s = res.startTime ? (typeof res.startTime.toDate === 'function' ? res.startTime.toDate() : new Date(res.startTime.seconds * 1000)) : null;
+                const e = res.endTime ? (typeof res.endTime.toDate === 'function' ? res.endTime.toDate() : new Date(res.endTime.seconds * 1000)) : null;
                 const ds = s ? s.toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', weekday:'short'}) : '-';
                 const ts = s ? s.getHours() + ":" + String(s.getMinutes()).padStart(2,'0') : '--:--';
+                const te = e ? e.getHours() + ":" + String(e.getMinutes()).padStart(2,'0') : '--:--';
                 return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left">
                     <td class="px-8 py-5 font-bold text-gray-800">${res.bandName || '不明'}</td>
                     <td class="px-8 py-5 text-xs text-gray-600">${ds}</td>
-                    <td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts}</td>
+                    <td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts} - ${te}</td>
                     <td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'練習':'イベント'}</span></td>
                     <td class="px-8 py-5 text-right text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'}">${res.status==='pending'?'承認待ち':'確定'}</td>
                 </tr>`}).join('');
@@ -676,9 +682,11 @@
             const bandId = document.getElementById('new-booking-band-id').value;
             const dateVal = document.getElementById('new-booking-date').value;
             const timeVal = document.getElementById('new-booking-time').value;
-            if(!bandId || !dateVal || !timeVal) return;
+            const endTimeVal = document.getElementById('new-booking-end-time').value;
+            if(!bandId || !dateVal || !timeVal || !endTimeVal) return;
             
             const startDateTime = new Date(`${dateVal}T${timeVal}:00`);
+            const endDateTime = new Date(`${dateVal}T${endTimeVal}:00`);
             const band = bandsData.find(b => b.id === bandId);
             
             try {
@@ -686,6 +694,7 @@
                     bandId,
                     bandName: band.name,
                     startTime: Timestamp.fromDate(startDateTime),
+                    endTime: Timestamp.fromDate(endDateTime),
                     type: newBookingType,
                     status: 'confirmed', // 管理者登録は即時確定
                     createdAt: serverTimestamp()
