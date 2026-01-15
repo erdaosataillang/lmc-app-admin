@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <!-- 眠い！！！！とても眠い！！！ -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LMC Admin - 軽音学部管理システム</title>
@@ -267,7 +266,7 @@
                                             <th class="px-8 py-5 text-left">日付</th>
                                             <th class="px-8 py-5 text-left">予約時間</th>
                                             <th class="px-8 py-5 text-left">タイプ</th>
-                                            <th class="px-8 py-5 text-right">状態</th>
+                                            <th class="px-8 py-5 text-right">状態 / 操作</th>
                                         </tr>
                                     </thead>
                                     <tbody id="reservations-list-body" class="text-sm">
@@ -371,13 +370,13 @@
         </div>
     </div>
 
-    <!-- New Booking Modal -->
+    <!-- Booking Modal (Create/Edit Combined) -->
     <div id="add-booking-modal" onclick="closeAddBookingModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
         <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
             <button onclick="closeAddBookingModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm">
                 <i class="fa-solid fa-xmark"></i>
             </button>
-            <h3 class="text-xl font-black text-gray-800 mb-6">新規予約の登録</h3>
+            <h3 id="booking-modal-title" class="text-xl font-black text-gray-800 mb-6">新規予約の登録</h3>
             <div class="space-y-6">
                 <div>
                     <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">予約バンド</label>
@@ -400,11 +399,26 @@
                 <div>
                     <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">予約タイプ</label>
                     <div class="flex bg-gray-100 p-1 rounded-2xl">
-                        <button onclick="setNewBookingType('normal')" id="type-btn-normal" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest bg-white text-blue-600 shadow-sm transition-all">練習(あわせ)</button>
-                        <button onclick="setNewBookingType('event')" id="type-btn-event" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-gray-400 transition-all">イベント</button>
+                        <button onclick="setNewBookingType('normal')" id="type-btn-normal" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all">練習(あわせ)</button>
+                        <button onclick="setNewBookingType('event')" id="type-btn-event" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all">イベント</button>
                     </div>
                 </div>
-                <button onclick="handleNewBookingSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">予約を登録する</button>
+                <button id="booking-submit-btn" onclick="handleNewBookingSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">予約を保存する</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Dialog Modal -->
+    <div id="confirm-modal" onclick="closeConfirmModal()" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center animate-in zoom-in duration-200">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-black text-gray-800 mb-2">本当に削除しますか？</h3>
+            <p id="confirm-modal-text" class="text-sm text-gray-500 mb-8 font-medium leading-relaxed">この操作は取り消すことができません。</p>
+            <div class="flex gap-4">
+                <button onclick="closeConfirmModal()" class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">キャンセル</button>
+                <button id="confirm-action-btn" class="flex-1 py-4 bg-red-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-red-100 hover:bg-red-700 transition-all">削除を実行</button>
             </div>
         </div>
     </div>
@@ -413,7 +427,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, deleteDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAWtITnn5uMOPBgOY0Bd7Rt5IN1ry8XoJI",
@@ -433,6 +447,7 @@
         let bandsData = [], cuesheetsData = [], usersData = [], bookingsData = [];
         let currentBookingSettings = { reservationMode: 'first_come', mode: 'manual', daysBefore: 7, time: '12:00' };
         let newBookingType = 'normal';
+        let editingBookingId = null;
         let bandSearchQuery = "", userSearchQuery = "", cueSearchQuery = "", userSortOrder = "name", reservationDateFilter = "";
         let userShowOnlyCurrent = true; 
 
@@ -469,7 +484,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal();
+                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal();
             }
         });
 
@@ -585,6 +600,9 @@
                     </div>
                     <div class="flex gap-2">
                         <a href="${cue.fileUrl}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-600 text-center py-3 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all">表示</a>
+                        <button onclick="requestDeleteCue('${cue.id}')" class="w-12 h-12 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
                     </div>
                 </div>`;
             }).join('');
@@ -628,14 +646,52 @@
                     <td class="px-8 py-5 text-xs text-gray-600">${ds}</td>
                     <td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts} - ${te}</td>
                     <td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'練習':'イベント'}</span></td>
-                    <td class="px-8 py-5 text-right text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'}">${res.status==='pending'?'承認待ち':'確定'}</td>
+                    <td class="px-8 py-5 text-right flex items-center justify-end gap-3">
+                        <span class="text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'} mr-2">${res.status==='pending'?'承認待ち':'確定'}</span>
+                        <button onclick="openEditBookingModal('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all"><i class="fa-solid fa-pen-to-square"></i></button>
+                        <button onclick="requestDeleteBooking('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                    </td>
                 </tr>`}).join('');
         };
 
         // --- ADD CUE / BOOKING LOGIC ---
         window.openAddCuesheetModal = () => document.getElementById('add-cuesheet-modal').classList.add('modal-active');
         window.closeAddCuesheetModal = () => document.getElementById('add-cuesheet-modal').classList.remove('modal-active');
-        window.openAddBookingModal = () => document.getElementById('add-booking-modal').classList.add('modal-active');
+        
+        window.openAddBookingModal = () => {
+            editingBookingId = null;
+            document.getElementById('booking-modal-title').innerText = "新規予約の登録";
+            document.getElementById('booking-submit-btn').innerText = "予約を登録する";
+            document.getElementById('new-booking-band-id').value = bandsData[0]?.id || "";
+            document.getElementById('new-booking-date').value = "";
+            document.getElementById('new-booking-time').value = "";
+            document.getElementById('new-booking-end-time').value = "";
+            setNewBookingType('normal');
+            document.getElementById('add-booking-modal').classList.add('modal-active');
+        };
+
+        window.openEditBookingModal = (id) => {
+            const res = bookingsData.find(b => b.id === id);
+            if(!res) return;
+            editingBookingId = id;
+            document.getElementById('booking-modal-title').innerText = "予約内容の編集";
+            document.getElementById('booking-submit-btn').innerText = "変更を保存する";
+            
+            document.getElementById('new-booking-band-id').value = res.bandId;
+            
+            const start = res.startTime ? (typeof res.startTime.toDate === 'function' ? res.startTime.toDate() : new Date(res.startTime.seconds * 1000)) : new Date();
+            const end = res.endTime ? (typeof res.endTime.toDate === 'function' ? res.endTime.toDate() : new Date(res.endTime.seconds * 1000)) : null;
+            
+            document.getElementById('new-booking-date').value = start.toISOString().split('T')[0];
+            document.getElementById('new-booking-time').value = start.getHours().toString().padStart(2,'0') + ":" + start.getMinutes().toString().padStart(2,'0');
+            if(end) {
+                document.getElementById('new-booking-end-time').value = end.getHours().toString().padStart(2,'0') + ":" + end.getMinutes().toString().padStart(2,'0');
+            }
+            
+            setNewBookingType(res.type || 'normal');
+            document.getElementById('add-booking-modal').classList.add('modal-active');
+        };
+
         window.closeAddBookingModal = () => document.getElementById('add-booking-modal').classList.remove('modal-active');
         
         window.setNewBookingType = (type) => {
@@ -661,6 +717,36 @@
             const html = bandsData.filter(b => !b.isArchived).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
             if(cueSel) cueSel.innerHTML = html;
             if(bookSel) bookSel.innerHTML = html;
+        };
+
+        // --- CONFIRM DIALOG LOGIC ---
+        let currentConfirmAction = null;
+        window.openConfirmModal = (text, action) => {
+            document.getElementById('confirm-modal-text').innerText = text;
+            currentConfirmAction = action;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+            document.getElementById('confirm-modal').classList.add('flex');
+        };
+        window.closeConfirmModal = () => {
+            document.getElementById('confirm-modal').classList.add('hidden');
+            document.getElementById('confirm-modal').classList.remove('flex');
+            currentConfirmAction = null;
+        };
+        document.getElementById('confirm-action-btn').onclick = async () => {
+            if(currentConfirmAction) await currentConfirmAction();
+            closeConfirmModal();
+        };
+
+        window.requestDeleteBooking = (id) => {
+            openConfirmModal("この予約情報を削除します。よろしいですか？", async () => {
+                await deleteDoc(doc(db, 'bookings', id));
+            });
+        };
+
+        window.requestDeleteCue = (id) => {
+            openConfirmModal("このCueシートデータを削除します。よろしいですか？", async () => {
+                await deleteDoc(doc(db, 'cuesheets', id));
+            });
         };
 
         window.handleNewCuesheetSubmit = async () => {
@@ -690,16 +776,21 @@
             const endDateTime = new Date(`${dateVal}T${endTimeVal}:00`);
             const band = bandsData.find(b => b.id === bandId);
             
+            const payload = {
+                bandId,
+                bandName: band.name,
+                startTime: Timestamp.fromDate(startDateTime),
+                endTime: Timestamp.fromDate(endDateTime),
+                type: newBookingType,
+                status: 'pending' // 常に承認待ちで保存
+            };
+
             try {
-                await addDoc(collection(db, 'bookings'), {
-                    bandId,
-                    bandName: band.name,
-                    startTime: Timestamp.fromDate(startDateTime),
-                    endTime: Timestamp.fromDate(endDateTime),
-                    type: newBookingType,
-                    status: 'pending', // 承認待ち状態で登録
-                    createdAt: serverTimestamp()
-                });
+                if(editingBookingId) {
+                    await updateDoc(doc(db, 'bookings', editingBookingId), payload);
+                } else {
+                    await addDoc(collection(db, 'bookings'), { ...payload, createdAt: serverTimestamp() });
+                }
                 closeAddBookingModal();
             } catch (err) { console.error(err); }
         };
@@ -710,7 +801,6 @@
             if (!band) return;
             const modal = document.getElementById('band-detail-modal');
             const content = document.getElementById('band-modal-content');
-            const memberData = resolveBandMemberData(band.memberIds);
             content.innerHTML = `
                 <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full"></div>
                 <div class="px-8 pb-10 -mt-16 text-left relative">
