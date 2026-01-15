@@ -19,16 +19,12 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .nav-btn.active { color: #2563eb !important; background-color: #eff6ff !important; font-weight: 700 !important; }
         
-        .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #3b82f6; }
-        input:checked + .slider:before { transform: translateX(20px); }
-
         .modal-active { display: flex !important; animation: fadeIn 0.2s ease-out; }
         #login-screen { position: fixed; inset: 0; z-index: 100; background: #ffffff; display: flex; align-items: center; justify-content: center; }
-        .uploading-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; }
+        
+        /* Loading styles */
+        .loading-dots:after { content: '.'; animation: dots 1s steps(5, end) infinite; }
+        @keyframes dots { 0%, 20% { content: '.'; } 40% { content: '..'; } 60% { content: '...'; } 80%, 100% { content: ''; } }
     </style>
 </head>
 <body class="min-h-screen flex overflow-hidden">
@@ -43,9 +39,9 @@
             <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム</p>
             
             <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8 text-center">
-                <p class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
-                <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100">
-                    <i class="fa-brands fa-line text-2xl"></i> LINEでログイン
+                <p id="login-status-msg" class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
+                <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100 disabled:opacity-50">
+                    <i class="fa-brands fa-line text-2xl"></i> <span id="btn-text">LINEでログイン</span>
                 </button>
             </div>
         </div>
@@ -106,7 +102,7 @@
                     <p id="page-desc" class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">System Operational</p>
                 </div>
                 <div id="db-status" class="flex items-center gap-3 text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
-                    <i class="fa-solid fa-circle text-[8px] text-green-500"></i> Connected
+                    <i id="status-icon" class="fa-solid fa-circle text-[8px] text-gray-300"></i> <span id="status-text">Connecting</span>
                 </div>
             </header>
 
@@ -134,10 +130,10 @@
                     </div>
                 </section>
 
-                <!-- Bands Management Section -->
+                <!-- Bands Management -->
                 <section id="content-bands" class="tab-content">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-left">
                             <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all">
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" id="band-search-input" placeholder="バンド名・メンバー名で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold">
@@ -162,7 +158,7 @@
                 <!-- Users Section -->
                 <section id="content-users" class="tab-content">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-left">
                             <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md">
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" id="user-search-input" placeholder="名前・学籍番号で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold">
@@ -170,14 +166,6 @@
                         </div>
                     </div>
                     <div id="users-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                </section>
-
-                <!-- Reservation Section -->
-                <section id="content-reservation" class="tab-content">
-                    <div class="p-12 text-center">
-                        <i class="fa-solid fa-calendar-check text-gray-200 text-6xl mb-4"></i>
-                        <p class="text-gray-400 font-bold uppercase tracking-widest text-xs">Reservation management coming soon</p>
-                    </div>
                 </section>
             </div>
         </main>
@@ -190,18 +178,12 @@
         </div>
     </div>
 
-    <div id="band-detail-modal" onclick="closeBandDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden relative max-h-[90vh] flex flex-col">
-            <div id="band-modal-content" class="overflow-y-auto flex-1"></div>
-        </div>
-    </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, query } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Firebase Config
+        // Global State & Config
         const firebaseConfig = {
             apiKey: "AIzaSyAWtITnn5uMOPBgOY0Bd7Rt5IN1ry8XoJI",
             authDomain: "urakata-app.firebaseapp.com",
@@ -211,157 +193,136 @@
             appId: "1:407777765696:web:045c2d94729022b4eab2a5"
         };
 
+        const LIFF_ID = "2008162165-WaEbbUrr";
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        const LIFF_ID = "2008162165-WaEbbUrr";
 
         let bandsData = [], usersData = [];
+        let currentUser = null;
 
-        // --- Auth & Init Logic ---
-
+        /**
+         * アプリの初期化
+         */
         async function init() {
+            const loginBtn = document.getElementById('line-login-btn');
+            const btnText = document.getElementById('btn-text');
+            
             try {
-                // Initialize LIFF
                 await liff.init({ liffId: LIFF_ID });
-                
-                if (liff.isLoggedIn()) {
-                    // Firebase Auth FIRST (Rule 3)
-                    if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                        await signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        await signInAnonymously(auth);
-                    }
 
-                    // Get LINE Profile
+                if (liff.isLoggedIn()) {
+                    // ログイン状態であればすぐにメイン画面に切り替え（ローディング表示）
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('admin-app').classList.remove('hidden');
+                    
+                    // プロフィール取得
                     const profile = await liff.getProfile();
                     document.getElementById('user-display-name').innerText = profile.displayName;
                     if (profile.pictureUrl) {
                         document.getElementById('user-avatar').innerHTML = `<img src="${profile.pictureUrl}" class="w-full h-full object-cover">`;
                     }
 
-                    // Success: Switch UI
-                    document.getElementById('login-screen').classList.add('hidden');
-                    document.getElementById('admin-app').classList.remove('hidden');
-                    
-                    // Start Firestore Listeners
-                    startListeners();
+                    // Firebase認証実行 (Rule 3)
+                    await authenticateFirebase();
                 } else {
-                    // Not Logged In: Ensure login screen is visible
+                    // ログインしていない場合
                     document.getElementById('login-screen').classList.remove('hidden');
                     document.getElementById('admin-app').classList.add('hidden');
                 }
             } catch (error) {
-                console.error("Initialization failed", error);
-                // Even on error, ensure login screen is shown if not logged in
-                if (!liff.isLoggedIn()) {
-                    document.getElementById('login-screen').classList.remove('hidden');
-                }
+                console.error("LIFF Init Error:", error);
+                document.getElementById('login-screen').classList.remove('hidden');
             }
         }
 
-        window.handleSignOut = async () => {
-            if (liff.isLoggedIn()) {
-                liff.logout();
+        /**
+         * Firebase認証 (Rule 3 準拠)
+         */
+        async function authenticateFirebase() {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+                
+                // 認証成功後にリスナーを開始
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        currentUser = user;
+                        updateStatus(true);
+                        startFirestoreListeners();
+                    }
+                });
+            } catch (error) {
+                console.error("Firebase Auth Error:", error);
+                updateStatus(false);
             }
-            await signOut(auth);
-            window.location.reload();
-        };
+        }
 
-        function startListeners() {
-            const appId = 'urakata-app'; // Simplified for example
-            
-            // Bands Listener
-            onSnapshot(collection(db, 'bands'), (snapshot) => {
+        /**
+         * Firestore監視 (Rule 1 準拠: /artifacts/{appId}/public/data/{collection})
+         */
+        function startFirestoreListeners() {
+            if (!currentUser) return;
+
+            // Bands (Strict Path)
+            const bandsRef = collection(db, 'artifacts', appId, 'public', 'data', 'bands');
+            onSnapshot(bandsRef, (snapshot) => {
                 bandsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderBands();
                 document.getElementById('stat-band-count').innerText = bandsData.length;
-            }, (error) => console.error("Bands Listener Error:", error));
+            }, (err) => console.error("Bands Listener Error:", err));
 
-            // Users Listener
-            onSnapshot(collection(db, 'users'), (snapshot) => {
+            // Users (Strict Path)
+            const usersRef = collection(db, 'artifacts', appId, 'public', 'data', 'users');
+            onSnapshot(usersRef, (snapshot) => {
                 usersData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderUsers();
-            }, (error) => console.error("Users Listener Error:", error));
+            }, (err) => console.error("Users Listener Error:", err));
         }
 
-        // --- UI Functions ---
+        /**
+         * UI更新ユーティリティ
+         */
+        function updateStatus(connected) {
+            const icon = document.getElementById('status-icon');
+            const text = document.getElementById('status-text');
+            if (connected) {
+                icon.className = "fa-solid fa-circle text-[8px] text-green-500";
+                text.innerText = "Connected";
+            } else {
+                icon.className = "fa-solid fa-circle text-[8px] text-red-500";
+                text.innerText = "Disconnected";
+            }
+        }
 
         window.showTab = (tabId) => {
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             document.getElementById('content-' + tabId)?.classList.add('active');
             document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById('nav-' + tabId)?.classList.add('active');
-            
-            // Update Header
-            const titles = { dashboard: 'Dashboard', bands: 'Band Management', cuesheets: 'Cue Sheets', users: 'User Directory', reservation: 'Reservations' };
-            document.getElementById('page-title').innerText = titles[tabId] || 'Dashboard';
+            document.getElementById('page-title').innerText = tabId.toUpperCase();
+        };
+
+        window.handleSignOut = async () => {
+            if (liff.isLoggedIn()) liff.logout();
+            await signOut(auth);
+            window.location.reload();
         };
 
         window.closeUserDetail = () => document.getElementById('user-detail-modal').classList.remove('modal-active');
-        window.closeBandDetail = () => document.getElementById('band-detail-modal').classList.remove('modal-active');
-
-        window.showUserDetail = (userId) => {
-            const user = usersData.find(u => u.id === userId);
-            if (!user) return;
-
-            const modal = document.getElementById('user-detail-modal');
-            const content = document.getElementById('user-modal-content');
-            const userBands = bandsData.filter(b => b.memberIds && b.memberIds.includes(userId));
-
-            const infoItems = [
-                { label: "学籍番号", value: user.studentId || '-' },
-                { label: "パート", value: Array.isArray(user.part) ? user.part.join(', ') : (user.part || '-') },
-                { label: "役割", value: user.role || 'Member' }
-            ];
-
-            content.innerHTML = `
-                <div class="bg-gradient-to-br from-indigo-500 to-blue-600 h-32 w-full"></div>
-                <div class="px-8 pb-10 -mt-16 relative">
-                    <button onclick="closeUserDetail()" class="absolute top-0 right-4 w-10 h-10 bg-white/20 hover:bg-white/40 rounded-full text-white flex items-center justify-center">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                    <div class="mb-6">
-                        ${user.icon ? `<img src="${user.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl object-cover bg-white">` : 
-                        `<div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center text-4xl font-bold text-indigo-500">${(user.name||"?")[0]}</div>`}
-                    </div>
-                    <div class="mb-8">
-                        <h3 class="text-3xl font-extrabold text-gray-800">${user.name || 'Guest'}</h3>
-                        <p class="text-indigo-500 font-bold text-sm mt-1 uppercase tracking-wider">${user.kana || ''}</p>
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-6 mb-8 text-left">
-                        ${infoItems.map(item => `
-                            <div class="space-y-1">
-                                <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">${item.label}</p>
-                                <p class="font-bold text-gray-700">${item.value}</p>
-                            </div>
-                        `).join('')}
-                    </div>
-
-                    <div class="space-y-4 text-left">
-                        <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">所属バンド</p>
-                        <div class="flex flex-wrap gap-2">
-                            ${userBands.length > 0 ? userBands.map(b => `
-                                <div class="flex items-center gap-2 bg-gray-50 border border-gray-100 px-4 py-2 rounded-2xl shadow-sm">
-                                    <div class="w-6 h-6 rounded-lg bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">${(b.name||"?")[0]}</div>
-                                    <span class="text-xs font-bold text-gray-700">${b.name}</span>
-                                </div>
-                            `).join('') : '<p class="text-xs text-gray-400">所属バンドはありません</p>'}
-                        </div>
-                    </div>
-                </div>`;
-            
-            modal.classList.add('modal-active');
-        };
 
         window.renderBands = () => {
             const body = document.getElementById('bands-list-body');
             if (!body) return;
             body.innerHTML = bandsData.map(b => `
-                <tr onclick="showBandDetail('${b.id}')" class="cursor-pointer hover:bg-gray-50 border-b border-gray-50 transition-colors">
+                <tr class="hover:bg-gray-50 border-b border-gray-50 transition-colors cursor-pointer">
                     <td class="px-8 py-5">
-                        <div class="font-bold text-gray-800">${b.name}</div>
+                        <div class="font-bold text-gray-800">${b.name || 'Unnamed Band'}</div>
                         <div class="text-[9px] text-gray-400 uppercase font-bold">ID: ${b.id.substring(0,8)}</div>
                     </td>
                     <td class="px-8 py-5 text-xs text-gray-500">
@@ -370,20 +331,20 @@
                     <td class="px-8 py-5">
                         ${b.latestCuesheetUrl ? '<span class="text-green-500 font-bold text-[10px] bg-green-50 px-2 py-1 rounded">提出済</span>' : '<span class="text-gray-300 text-[10px]">未提出</span>'}
                     </td>
-                    <td class="px-8 py-5 text-right"><button class="text-blue-600 font-extrabold text-xs hover:underline">Manage</button></td>
+                    <td class="px-8 py-5 text-right"><button class="text-blue-600 font-extrabold text-xs">Manage</button></td>
                 </tr>`).join('');
         };
 
         window.renderUsers = () => {
-            const grid = document.getElementById('users-grid-container');
-            if (!grid) return;
-            grid.innerHTML = usersData.map(u => `
-                <div onclick="showUserDetail('${u.id}')" class="cursor-pointer p-5 border border-gray-100 rounded-[28px] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-4 bg-white shadow-sm group">
-                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl overflow-hidden group-hover:scale-110 transition-transform">
-                        ${u.icon ? `<img src="${u.icon}" class="w-full h-full object-cover">` : (u.name||"?")[0]}
+            const container = document.getElementById('users-grid-container');
+            if (!container) return;
+            container.innerHTML = usersData.map(u => `
+                <div class="p-5 border border-gray-100 rounded-[28px] bg-white shadow-sm flex items-center gap-4 hover:shadow-lg transition-all cursor-pointer">
+                    <div class="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold overflow-hidden">
+                        ${u.icon ? `<img src="${u.icon}" class="w-full h-full object-cover">` : (u.name || "?")[0]}
                     </div>
-                    <div class="flex-1 min-w-0 text-left">
-                        <h4 class="font-bold text-gray-800 truncate">${u.name}</h4>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-gray-800 truncate">${u.name || 'Guest'}</h4>
                         <p class="text-[9px] text-gray-400 font-extrabold uppercase tracking-widest">${u.studentId || 'No ID'}</p>
                     </div>
                 </div>`).join('');
@@ -391,29 +352,20 @@
 
         // Event Listeners
         document.getElementById('line-login-btn').addEventListener('click', () => {
+            document.getElementById('btn-text').innerHTML = '認証中<span class="loading-dots"></span>';
+            document.getElementById('line-login-btn').disabled = true;
             liff.login({ redirectUri: window.location.href });
         });
 
-        // Search Handlers (Memory filtering)
+        // Search logic
         document.getElementById('band-search-input')?.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase();
-            const rows = document.querySelectorAll('#bands-list-body tr');
-            rows.forEach(row => {
-                const text = row.innerText.toLowerCase();
-                row.style.display = text.includes(term) ? '' : 'none';
+            document.querySelectorAll('#bands-list-body tr').forEach(row => {
+                row.style.display = row.innerText.toLowerCase().includes(term) ? '' : 'none';
             });
         });
 
-        document.getElementById('user-search-input')?.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase();
-            const cards = document.querySelectorAll('#users-grid-container > div');
-            cards.forEach(card => {
-                const text = card.innerText.toLowerCase();
-                card.style.display = text.includes(term) ? '' : 'none';
-            });
-        });
-
-        // Initialize App
+        // Bootstrap
         init();
     </script>
 </body>
