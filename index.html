@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LMC Admin Pro - 軽音学部高度管理システム</title>
+    <title>LMC Admin - 軽音学部管理システム</title>
     <!-- Tailwind CSS & Font Awesome -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,7 +11,7 @@
     <script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap');
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f8fafc; color: #1e293b; text-align: left; }
         .tab-content { display: none; animation: fadeIn 0.3s ease-out; }
         .tab-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
@@ -19,6 +19,7 @@
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         .nav-btn.active { color: #2563eb !important; background-color: #eff6ff !important; font-weight: 700 !important; }
         
+        /* Toggle Switch Style */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #e2e8f0; transition: .4s; border-radius: 20px; }
@@ -26,8 +27,12 @@
         input:checked + .slider { background-color: #3b82f6; }
         input:checked + .slider:before { transform: translateX(20px); }
 
+        /* Modal Background Blur & Height Constraint */
         .modal-active { display: flex !important; animation: fadeIn 0.2s ease-out; }
         #login-screen { position: fixed; inset: 0; z-index: 100; background: #ffffff; display: flex; align-items: center; justify-content: center; transition: opacity 0.3s ease; }
+        #login-screen.hidden { opacity: 0; pointer-events: none; }
+        
+        /* Loading Overlay for Uploads */
         .uploading-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; }
     </style>
 </head>
@@ -37,23 +42,27 @@
     <div id="login-screen">
         <div class="max-w-md w-full px-8 py-12 text-center">
             <div class="w-20 h-20 bg-blue-600 rounded-[24px] flex items-center justify-center text-white shadow-2xl shadow-blue-200 mx-auto mb-8">
-                <i class="fa-solid fa-bolt-lightning text-4xl"></i>
+                <i class="fa-solid fa-guitar text-4xl"></i>
             </div>
             <h1 class="text-3xl font-extrabold tracking-tighter mb-2">LMC <span class="text-blue-600">Admin</span></h1>
-            <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム Pro</p>
+            <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム</p>
+            
             <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8">
-                <p class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理用LINEアカウントで<br>認証を行ってください。</p>
+                <p class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
                 <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100">
-                    <i class="fa-brands fa-line text-2xl"></i> LINEでログイン
+                    <i class="fa-brands fa-line text-2xl"></i>
+                    LINEでログイン
                 </button>
             </div>
+            
+            <p class="text-[10px] text-gray-300 font-bold uppercase tracking-widest">Authorized Personnel Only</p>
         </div>
     </div>
 
     <!-- メインアプリケーション -->
     <div id="admin-app" class="hidden flex w-full h-full overflow-hidden">
         <!-- サイドバー -->
-        <aside class="w-[280px] bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm">
+        <aside class="w-[260px] bg-white border-r border-gray-200 flex flex-col fixed h-full z-30 shadow-sm text-left">
             <div class="p-8">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-blue-200">
@@ -61,43 +70,36 @@
                     </div>
                     <div>
                         <h1 class="text-xl font-extrabold tracking-tighter leading-none">LMC <span class="text-blue-600">Admin</span></h1>
-                        <p class="text-[9px] text-gray-400 uppercase font-bold tracking-[0.2em] mt-1">Control Center</p>
+                        <p class="text-[9px] text-gray-400 uppercase font-bold tracking-[0.2em] mt-1 leading-none">Control Panel</p>
                     </div>
                 </div>
             </div>
 
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
-                <p class="text-[10px] font-extrabold text-gray-400 px-4 mb-2 uppercase tracking-widest">General</p>
-                <button onclick="showTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3 text-gray-500 hover:bg-gray-50 rounded-2xl transition-all group">
-                    <i class="fa-solid fa-chart-pie w-6"></i><span class="ml-3 font-semibold">ダッシュボード</span>
+                <p class="text-[10px] font-extrabold text-gray-400 px-4 mb-3 uppercase tracking-widest">Main Menu</p>
+                <button onclick="showTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all duration-200 group">
+                    <i class="fa-solid fa-house w-6"></i><span class="ml-3 font-semibold">ダッシュボード</span>
                 </button>
-                <button onclick="showTab('announcements')" id="nav-announcements" class="nav-btn w-full flex items-center p-3 text-gray-500 hover:bg-gray-50 rounded-2xl transition-all">
-                    <i class="fa-solid fa-bullhorn w-6"></i><span class="ml-3 font-semibold">お知らせ管理</span>
-                </button>
-
-                <p class="text-[10px] font-extrabold text-gray-400 px-4 mt-6 mb-2 uppercase tracking-widest">Management</p>
-                <button onclick="showTab('bands')" id="nav-bands" class="nav-btn w-full flex items-center p-3 text-gray-500 hover:bg-gray-50 rounded-2xl transition-all">
+                <button onclick="showTab('bands')" id="nav-bands" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
                     <i class="fa-solid fa-users-rectangle w-6"></i><span class="ml-3 font-semibold">バンドの管理</span>
                 </button>
-                <button onclick="showTab('users')" id="nav-users" class="nav-btn w-full flex items-center p-3 text-gray-500 hover:bg-gray-50 rounded-2xl transition-all">
+                <button onclick="showTab('cuesheets')" id="nav-cuesheets" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
+                    <i class="fa-solid fa-file-invoice w-6"></i><span class="ml-3 font-semibold">Cueシートの確認</span>
+                </button>
+                <button onclick="showTab('users')" id="nav-users" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
                     <i class="fa-solid fa-user-gear w-6"></i><span class="ml-3 font-semibold">個人の管理</span>
                 </button>
-                <button onclick="showTab('inventory')" id="nav-inventory" class="nav-btn w-full flex items-center p-3 text-gray-500 hover:bg-gray-50 rounded-2xl transition-all">
-                    <i class="fa-solid fa-amp-guitar w-6"></i><span class="ml-3 font-semibold">機材・備品管理</span>
-                </button>
-
-                <p class="text-[10px] font-extrabold text-gray-400 px-4 mt-6 mb-2 uppercase tracking-widest">Booking</p>
-                <button onclick="showTab('reservation')" id="nav-reservation" class="nav-btn w-full flex items-center p-3 text-gray-500 hover:bg-gray-50 rounded-2xl transition-all">
-                    <i class="fa-solid fa-calendar-check w-6"></i><span class="ml-3 font-semibold">予約システム</span>
+                <button onclick="showTab('reservation')" id="nav-reservation" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
+                    <i class="fa-solid fa-calendar-check w-6"></i><span class="ml-3 font-semibold">予約システム管理</span>
                 </button>
             </nav>
 
             <div class="p-6 border-t border-gray-100">
                 <div class="flex items-center gap-3 bg-gray-50 p-3 rounded-2xl">
-                    <div id="user-avatar" class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold overflow-hidden">?</div>
-                    <div class="flex-1 min-w-0 text-left">
-                        <p id="user-display-name" class="text-sm font-bold text-gray-800 truncate">Loading...</p>
-                        <p class="text-[9px] text-gray-400 font-bold uppercase">System Admin</p>
+                    <div id="user-avatar" class="w-10 h-10 rounded-full bg-indigo-500 flex items-center justify-center text-white font-bold shadow-inner overflow-hidden">?</div>
+                    <div class="flex-1 min-w-0">
+                        <p id="user-display-name" class="text-sm font-bold text-gray-800 truncate text-left">Loading...</p>
+                        <p id="user-role-label" class="text-[10px] text-gray-500 font-medium tracking-tight text-left">Admin Panel</p>
                     </div>
                     <button onclick="handleSignOut()" class="text-gray-300 hover:text-red-500 transition-colors">
                         <i class="fa-solid fa-right-from-bracket"></i>
@@ -107,130 +109,203 @@
         </aside>
 
         <!-- メインコンテンツ -->
-        <main class="flex-1 ml-[280px] h-screen overflow-y-auto relative bg-[#f8fafc]">
+        <main class="flex-1 ml-[260px] h-screen overflow-y-auto relative text-left">
             <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-5 flex justify-between items-center">
                 <div>
                     <h2 id="page-title" class="text-xl font-extrabold text-gray-800 uppercase tracking-widest">Dashboard</h2>
-                    <p id="page-desc" class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">Loading...</p>
+                    <p id="page-desc" class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">Loading status...</p>
                 </div>
                 <div id="db-status" class="flex items-center gap-3 text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
-                    <i class="fa-solid fa-circle text-[8px] text-gray-300"></i> Offline
+                    <i class="fa-solid fa-circle text-[8px] text-gray-300"></i> Connecting...
                 </div>
             </header>
 
-            <div class="p-8 max-w-7xl mx-auto">
-                <!-- 1. Dashboard -->
+            <div class="p-8 max-w-7xl mx-auto text-left">
+                <!-- 1. Dashboard Section -->
                 <section id="content-dashboard" class="tab-content active">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm">
-                            <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Active Bands</p>
-                            <h4 id="stat-band-count" class="text-3xl font-black text-gray-800">0</h4>
-                        </div>
-                        <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm">
-                            <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Total Members</p>
-                            <h4 id="stat-user-count" class="text-3xl font-black text-gray-800">0</h4>
-                        </div>
-                        <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm">
-                            <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Broken Gear</p>
-                            <h4 id="stat-broken-count" class="text-3xl font-black text-red-500">0</h4>
-                        </div>
-                        <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm">
-                            <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-1">Pending Cues</p>
-                            <h4 id="stat-cue-count" class="text-3xl font-black text-blue-600">0</h4>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 2. Announcements -->
-                <section id="content-announcements" class="tab-content">
-                    <div class="mb-6 flex justify-between items-center">
-                        <h3 class="font-bold text-gray-800">お知らせ一覧</h3>
-                        <button onclick="openNewAnnouncementModal()" class="bg-gray-900 text-white px-5 py-2.5 rounded-2xl text-xs font-bold hover:bg-black transition-all flex items-center gap-2">
-                            <i class="fa-solid fa-plus"></i> 新規作成
-                        </button>
-                    </div>
-                    <div id="announcements-list" class="space-y-4 text-left">
-                        <!-- Dynamic content -->
-                    </div>
-                </section>
-
-                <!-- 3. Bands -->
-                <section id="content-bands" class="tab-content">
-                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
-                        <div class="flex items-center gap-4">
-                            <div class="flex-1 flex items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl">
-                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
-                                <input type="text" oninput="handleBandSearch(event)" placeholder="バンド名・メンバーで検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden">
-                        <table class="w-full text-left">
-                            <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50">
-                                <tr>
-                                    <th class="px-8 py-5">バンド名</th>
-                                    <th class="px-8 py-5">メンバー</th>
-                                    <th class="px-8 py-5 text-right">操作</th>
-                                </tr>
-                            </thead>
-                            <tbody id="bands-list-body" class="text-sm"></tbody>
-                        </table>
-                    </div>
-                </section>
-
-                <!-- 4. Users -->
-                <section id="content-users" class="tab-content">
-                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6 flex items-center justify-between">
-                        <div class="flex-1 flex items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md">
-                            <i class="fa-solid fa-user-tag text-gray-400"></i>
-                            <input type="text" oninput="handleUserSearch(event)" placeholder="名前・学籍番号で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold">
-                        </div>
-                        <button onclick="exportUsersToCSV()" class="bg-emerald-50 text-emerald-600 px-6 py-3 rounded-2xl text-xs font-bold hover:bg-emerald-100 transition-all flex items-center gap-2 border border-emerald-100">
-                            <i class="fa-solid fa-file-csv"></i> CSVエクスポート
-                        </button>
-                    </div>
-                    <div id="users-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-                </section>
-
-                <!-- 5. Inventory (New) -->
-                <section id="content-inventory" class="tab-content">
-                    <div class="mb-6 flex justify-between items-center">
-                        <div class="flex gap-2">
-                            <button onclick="filterInventory('all')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-gray-100">全機材</button>
-                            <button onclick="filterInventory('broken')" class="px-4 py-2 rounded-xl text-xs font-bold bg-white border border-gray-100 text-red-500">故障中</button>
-                        </div>
-                        <button onclick="openNewGearModal()" class="bg-gray-900 text-white px-5 py-2.5 rounded-2xl text-xs font-bold">機材を登録</button>
-                    </div>
-                    <div id="inventory-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <!-- Dynamic content -->
-                    </div>
-                </section>
-
-                <!-- 6. Reservation -->
-                <section id="content-reservation" class="tab-content">
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 space-y-4">
-                            <div class="bg-white rounded-[28px] p-6 border border-gray-100">
-                                <h4 class="text-sm font-bold text-gray-800 mb-4">予約ストリーム</h4>
-                                <div class="overflow-hidden">
-                                    <table class="w-full text-left">
-                                        <tbody id="reservations-list-body" class="text-xs"></tbody>
-                                    </table>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 text-left">
+                        <div onclick="showTab('bands')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
+                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-users-rectangle text-[180px]"></i></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors text-left"><i class="fa-solid fa-users-rectangle text-blue-600 group-hover:text-white text-3xl"></i></div>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">バンドの管理</h3>
+                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed">全登録バンドの情報をリアルタイムで編集。メンバー構成や提出資料の管理を行います。</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest"><span id="stat-band-count">0</span> Bands</span>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="space-y-6">
-                            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100">
-                                <h4 class="font-extrabold text-gray-800 mb-6 uppercase text-xs tracking-widest">予約設定</h4>
-                                <div class="space-y-6">
+                        <div onclick="showTab('cuesheets')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
+                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-file-invoice text-[180px]"></i></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 transition-colors text-left text-left"><i class="fa-solid fa-file-invoice text-emerald-600 group-hover:text-white text-3xl"></i></div>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">Cueシート確認</h3>
+                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left text-left text-left">提出されたPA・照明要望をチェック。セトリや機材配置を現場担当者と共有します。</p>
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left text-left text-left text-left"><span id="stat-cue-count">0</span> Submitted</span>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div onclick="showTab('users')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
+                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity text-left text-left text-left"><i class="fa-solid fa-user-gear text-[180px]"></i></div>
+                            <div class="relative z-10 text-left text-left">
+                                <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors text-left text-left text-left text-left text-left"><i class="fa-solid fa-user-gear text-indigo-600 group-hover:text-white text-3xl"></i></div>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left text-left text-left text-left">個人の管理</h3>
+                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left text-left text-left text-left text-left">部員名簿の閲覧、権限の設定、誕生日による現役生の自動判別・管理を行います。</p>
+                                <div class="flex items-center justify-between text-left text-left text-left">
+                                    <span class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left text-left text-left text-left text-left text-left"><span id="stat-user-count">0</span> Active Members</span>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors text-left text-left text-left text-left text-left"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2. Bands Management Section -->
+                <section id="content-bands" class="tab-content text-left">
+                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                                <input type="text" oninput="handleBandSearch(event)" placeholder="バンド名・メンバー名・かな・IDで検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
+                            </div>
+                            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
+                                Bands Registry
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden text-left">
+                        <div class="overflow-x-auto text-left">
+                            <table class="w-full text-left">
+                                <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50 text-left">
+                                    <tr class="text-left">
+                                        <th class="px-8 py-5 text-left">バンド名 / システムID</th>
+                                        <th class="px-8 py-5 text-left">メンバー構成</th>
+                                        <th class="px-8 py-5 text-left">Cueシート</th>
+                                        <th class="px-8 py-5 text-right">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="bands-list-body" class="text-sm">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 3. Cue Sheets Section -->
+                <section id="content-cuesheets" class="tab-content">
+                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-8">
+                        <div class="flex flex-wrap items-center justify-between gap-4">
+                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-emerald-100 transition-all">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                                <input type="text" oninput="handleCueSearch(event)" placeholder="バンド名で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
+                            </div>
+                            <button onclick="openAddCuesheetModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-emerald-100">
+                                <i class="fa-solid fa-plus"></i> Cueシートを追加
+                            </button>
+                        </div>
+                    </div>
+                    <div id="cuesheets-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- 提出済みCueシートの一覧が入る -->
+                    </div>
+                </section>
+
+                <!-- 4. Users Section -->
+                <section id="content-users" class="tab-content text-left">
+                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-left">
+                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                                <input type="text" oninput="handleUserSearch(event)" placeholder="名前・かな・学籍番号で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
+                            </div>
+                            <div class="flex items-center gap-6">
+                                <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
+                                    <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest whitespace-nowrap">現役生のみ表示</span>
+                                    <label class="switch text-left">
+                                        <input type="checkbox" id="user-current-toggle" onchange="handleUserCurrentToggle(event)" checked>
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="flex items-center gap-2 text-left">
+                                    <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">Sort:</span>
+                                    <select onchange="handleUserSort(event)" class="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-bold outline-none cursor-pointer hover:bg-gray-100 transition shadow-sm">
+                                        <option value="name">名前順 (読み)</option>
+                                        <option value="birthday">学年順 (誕生日)</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="users-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                    </div>
+                </section>
+
+                <!-- 5. Reservation Section -->
+                <section id="content-reservation" class="tab-content text-left">
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 text-left">
+                        <div class="lg:col-span-3 space-y-6 text-left">
+                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 flex items-center justify-between text-left text-left">
+                                <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl text-left">
+                                    <i class="fa-solid fa-filter text-gray-300 text-xs"></i>
+                                    <input type="date" id="res-date-filter" onchange="handleResDateFilter(event)" class="bg-transparent border-none outline-none text-xs font-bold text-gray-600 cursor-pointer">
+                                </div>
+                                <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">Live Booking Stream</p>
+                            </div>
+                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden text-left">
+                                <table class="w-full text-left">
+                                    <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50 text-left">
+                                        <tr class="text-left">
+                                            <th class="px-8 py-5 text-left">バンド名</th>
+                                            <th class="px-8 py-5 text-left">日付</th>
+                                            <th class="px-8 py-5 text-left">予約時間</th>
+                                            <th class="px-8 py-5 text-left">タイプ</th>
+                                            <th class="px-8 py-5 text-right">状態</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="reservations-list-body" class="text-sm">
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="lg:col-span-1 space-y-6 text-left">
+                            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-left">
+                                <h4 class="font-extrabold text-gray-800 mb-6 uppercase text-xs tracking-[0.1em] border-b border-gray-50 pb-4 text-left">予約システム設定</h4>
+                                <div class="space-y-6 text-left">
                                     <div>
-                                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3">受付モード</label>
-                                        <div class="flex bg-gray-100 p-1 rounded-2xl">
-                                            <button onclick="updateBookingMode('first_come')" id="mode-first-come" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold transition-all">先着順</button>
-                                            <button onclick="updateBookingMode('lottery')" id="mode-lottery" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold transition-all">抽選制</button>
+                                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left">予約受付モード</label>
+                                        <div class="flex bg-gray-100 p-1 rounded-2xl text-center">
+                                            <button onclick="updateBookingMode('first_come')" id="mode-first-come" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">先着順</button>
+                                            <button onclick="updateBookingMode('lottery')" id="mode-lottery" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">抽選制</button>
                                         </div>
                                     </div>
-                                    <button onclick="saveBookingSettings()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-bold text-xs shadow-lg shadow-blue-100">設定を反映</button>
+
+                                    <!-- 抽選制の詳細設定 -->
+                                    <div id="lottery-settings-panel" class="hidden space-y-6 border-t border-gray-50 pt-6 animate-in fade-in duration-300 text-left">
+                                        <div>
+                                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left">抽選実行モード</label>
+                                            <div class="flex bg-gray-100 p-1 rounded-2xl text-center">
+                                                <button onclick="updateLotteryExecMode('auto')" id="exec-auto" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center">自動実行</button>
+                                                <button onclick="updateLotteryExecMode('manual')" id="exec-manual" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center text-center">手動実行</button>
+                                            </div>
+                                        </div>
+                                        <div id="auto-lottery-inputs" class="space-y-4 text-left">
+                                            <div>
+                                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left">実行タイミング (何日前)</label>
+                                                <div class="relative text-left">
+                                                    <input type="number" id="days-before" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left" placeholder="7">
+                                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400">日前</span>
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left">実行時間</label>
+                                                <input type="time" id="exec-time" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button onclick="saveBookingSettings()" class="w-full bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-gray-200 text-center">設定を保存する</button>
                                 </div>
                             </div>
                         </div>
@@ -240,246 +315,520 @@
         </main>
     </div>
 
-    <!-- モーダル各種 -->
-    <div id="common-modal" onclick="closeCommonModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200">
-            <div id="modal-content" class="p-8"></div>
+    <!-- Modals -->
+    <!-- User Detail Modal -->
+    <div id="user-detail-modal" onclick="closeUserDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left max-h-[90vh] flex flex-col">
+            <button onclick="closeUserDetail()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm text-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="user-modal-content" class="overflow-y-auto flex-1 p-0"></div>
         </div>
     </div>
 
+    <!-- Band Detail/Edit Modal -->
+    <div id="band-detail-modal" onclick="closeBandDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left max-h-[90vh] flex flex-col">
+            <button onclick="closeBandDetail()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm text-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div id="band-modal-content" class="overflow-y-auto flex-1 p-0"></div>
+        </div>
+    </div>
+
+    <!-- New Cue Sheet Modal (ADD FUNCTION) -->
+    <div id="add-cuesheet-modal" onclick="closeAddCuesheetModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
+            <button onclick="closeAddCuesheetModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-black text-gray-800 mb-6">Cueシートの新規登録</h3>
+            <div class="space-y-6">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">提出対象のバンド</label>
+                    <select id="new-cue-band-id" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-emerald-100 transition-all">
+                        <!-- 動的にバンド一覧を挿入 -->
+                    </select>
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">ファイル (PDF等)</label>
+                    <div class="relative w-full h-32 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-colors group">
+                        <i class="fa-solid fa-file-arrow-up text-gray-300 text-2xl group-hover:text-emerald-400 transition-colors"></i>
+                        <span id="file-name-label" class="text-xs font-bold text-gray-400">ファイルをタップして選択</span>
+                        <input type="file" id="new-cue-file" class="absolute inset-0 opacity-0 cursor-pointer" onchange="updateFileNameLabel(this)">
+                    </div>
+                </div>
+                <button id="upload-cue-btn" onclick="handleNewCuesheetSubmit()" class="w-full bg-emerald-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100">登録を実行する</button>
+            </div>
+            <div id="add-cuesheet-loader" class="uploading-overlay hidden flex-col gap-3">
+                <i class="fa-solid fa-spinner fa-spin text-emerald-600 text-3xl"></i>
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Uploading...</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase & Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, deleteDoc, query, orderBy } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // Environment Variables (Provided by execution environment)
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = {
+            apiKey: "AIzaSyAWtITnn5uMOPBgOY0Bd7Rt5IN1ry8XoJI",
+            authDomain: "urakata-app.firebaseapp.com",
+            projectId: "urakata-app",
+            storageBucket: "urakata-app.firebasestorage.app",
+            messagingSenderId: "407777765696",
+            appId: "1:407777765696:web:045c2d94729022b4eab2a5",
+            measurementId: "G-9ZRMD26XNJ"
+        };
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const LIFF_ID = "2008162165-WaEbbUrr";
 
-        let bandsData = [], usersData = [], gearData = [], announcements = [];
-        let bandSearchQuery = "", userSearchQuery = "";
+        let bandsData = [], cuesheetsData = [], usersData = [], bookingsData = [];
+        let currentBookingSettings = { reservationMode: 'first_come', mode: 'manual', daysBefore: 7, time: '12:00' };
+        let bandSearchQuery = "", userSearchQuery = "", cueSearchQuery = "", userSortOrder = "name", reservationDateFilter = "";
+        let userShowOnlyCurrent = true; 
 
-        // --- Auth flow ---
-        const initLIFF = async () => {
+        const tabInfo = {
+            'dashboard': { title: 'Dashboard', desc: 'システムの概要と統計' },
+            'bands': { title: 'Bands', desc: '全バンドの編成・資料管理' },
+            'cuesheets': { title: 'Cue Sheets', desc: 'PA・照明要望の承認確認' },
+            'users': { title: 'Members', desc: '部員名簿と検索・並び替え' },
+            'reservation': { title: 'Booking', desc: 'スタジオ予約システム設定' }
+        };
+
+        // --- Global Helpers ---
+        window.showTab = (tabId) => {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            const content = document.getElementById('content-' + tabId);
+            if(content) content.classList.add('active');
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            const navBtn = document.getElementById('nav-' + tabId);
+            if(navBtn) navBtn.classList.add('active');
+            const info = tabInfo[tabId] || tabInfo['dashboard'];
+            document.getElementById('page-title').innerText = info.title;
+            document.getElementById('page-desc').innerText = info.desc;
+        };
+
+        window.updateBookingMode = (rMode) => { currentBookingSettings.reservationMode = rMode; renderBookingSettingsUI(); };
+        window.updateLotteryExecMode = (lMode) => { currentBookingSettings.mode = lMode; renderBookingSettingsUI(); };
+        window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
+        window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
+        window.handleCueSearch = (e) => { cueSearchQuery = e.target.value; renderCuesheets(); };
+        window.handleUserSort = (e) => { userSortOrder = e.target.value; renderUsers(); };
+        window.handleResDateFilter = (e) => { reservationDateFilter = e.target.value; renderReservations(); };
+        window.handleUserCurrentToggle = (e) => { userShowOnlyCurrent = e.target.checked; renderUsers(); };
+        window.handleSignOut = () => { if (liff.isLoggedIn()) { liff.logout(); window.location.reload(); } };
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeUserDetail();
+                closeBandDetail();
+                closeAddCuesheetModal();
+            }
+        });
+
+        // --- Catbox Upload ---
+        const uploadFileToCatbox = async (file) => {
+            const formData = new FormData();
+            formData.append('reqtype', 'fileupload');
+            formData.append('fileToUpload', file);
+            const response = await fetch('https://catbox.moe/user/api.php', { method: 'POST', body: formData });
+            if (!response.ok) throw new Error('Upload failed');
+            return await response.text();
+        };
+
+        // --- LIFF FLOW ---
+        async function initApp() {
             try {
                 await liff.init({ liffId: LIFF_ID });
                 if (liff.isLoggedIn()) {
                     const profile = await liff.getProfile();
-                    document.getElementById('user-display-name').innerText = profile.displayName;
-                    if(profile.pictureUrl) document.getElementById('user-avatar').innerHTML = `<img src="${profile.pictureUrl}" class="w-full h-full object-cover">`;
-                    
+                    updateUserProfileUI(profile);
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else {
                         await signInAnonymously(auth);
                     }
+                    document.getElementById('login-screen').classList.add('hidden');
+                    document.getElementById('admin-app').classList.remove('hidden');
+                    startDataListeners();
                 } else {
                     document.getElementById('login-screen').classList.remove('hidden');
+                    document.getElementById('admin-app').classList.add('hidden');
                 }
-            } catch (err) { console.error(err); }
-        };
+            } catch (err) { console.error("LIFF Error:", err); }
+        }
 
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('login-screen').classList.add('hidden');
-                document.getElementById('admin-app').classList.remove('hidden');
-                startListeners();
+        function updateUserProfileUI(profile) {
+            const nameEl = document.getElementById('user-display-name');
+            const avatarEl = document.getElementById('user-avatar');
+            if (nameEl) nameEl.innerText = profile.displayName;
+            if (avatarEl) {
+                if (profile.pictureUrl) avatarEl.innerHTML = `<img src="${profile.pictureUrl}" class="w-full h-full object-cover">`;
+                else avatarEl.innerText = profile.displayName[0];
             }
-        });
+        }
 
-        document.getElementById('line-login-btn').addEventListener('click', () => liff.login());
+        document.getElementById('line-login-btn').addEventListener('click', () => { if (!liff.isLoggedIn()) liff.login(); });
 
-        // --- Data Listeners ---
-        function startListeners() {
-            const statusEl = document.getElementById('db-status');
-            statusEl.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Online';
+        // --- Firestore Listeners ---
+        function startDataListeners() {
+            const dbStatus = document.getElementById('db-status');
+            if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Connected';
 
-            // Bands
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'bands'), s => {
-                bandsData = s.docs.map(d => ({id: d.id, ...d.data()}));
-                renderBands();
-                updateStats();
-            }, err => console.error(err));
-
-            // Users
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'users'), s => {
-                usersData = s.docs.map(d => ({id: d.id, ...d.data()}));
-                renderUsers();
-                updateStats();
-            }, err => console.error(err));
-
-            // Gear (Inventory)
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'inventory'), s => {
-                gearData = s.docs.map(d => ({id: d.id, ...d.data()}));
-                renderInventory();
-                updateStats();
-            });
-
-            // Announcements
-            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'announcements'), s => {
-                announcements = s.docs.map(d => ({id: d.id, ...d.data()}));
-                renderAnnouncements();
+            onSnapshot(collection(db, 'bands'), s => { bandsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderBands(); updateStats(); populateBandSelect(); });
+            onSnapshot(collection(db, 'users'), s => { usersData = s.docs.map(d => ({id:d.id, ...d.data()})); renderUsers(); renderBands(); updateStats(); });
+            onSnapshot(collection(db, 'bookings'), s => { bookingsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderReservations(); });
+            onSnapshot(collection(db, 'cuesheets'), s => { cuesheetsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderCuesheets(); updateStats(); });
+            onSnapshot(doc(db, 'system', 'settings'), s => { 
+                if(s.exists()) {
+                    const data = s.data();
+                    currentBookingSettings.reservationMode = data.reservationMode || data.bookingMode || 'first_come';
+                    const cfg = data.lotteryConfig || data;
+                    currentBookingSettings.mode = cfg.mode || 'manual';
+                    currentBookingSettings.daysBefore = cfg.daysBefore || 7;
+                    let t = cfg.time || '12:00';
+                    currentBookingSettings.time = (typeof t === 'number') ? `${String(t).padStart(2, '0')}:00` : t;
+                    renderBookingSettingsUI();
+                }
             });
         }
 
-        // --- Tab Management ---
-        window.showTab = (tabId) => {
-            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            document.getElementById('content-' + tabId).classList.add('active');
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('nav-' + tabId).classList.add('active');
-            
-            const titles = {
-                dashboard: "Dashboard", announcements: "Announcements",
-                bands: "Bands Registry", users: "Member List",
-                inventory: "Equipment", reservation: "Booking System"
-            };
-            document.getElementById('page-title').innerText = titles[tabId];
+        // --- DATA RESOLVERS ---
+        const resolveBandMemberData = (memberIds) => {
+            if (!memberIds || !Array.isArray(memberIds)) return { names: [], kanas: [], full: [] };
+            const members = memberIds.map(id => usersData.find(u => u.id === id)).filter(u => u);
+            return { names: members.map(u => u.name || ""), kanas: members.map(u => u.kana || ""), full: members };
         };
 
-        // --- Rendering ---
-        const renderBands = () => {
-            const list = document.getElementById('bands-list-body');
+        // --- RENDERING ---
+        window.renderBands = () => {
+            const container = document.getElementById('bands-list-body');
+            if (!container) return;
             const q = bandSearchQuery.toLowerCase();
-            const filtered = bandsData.filter(b => b.name?.toLowerCase().includes(q));
-            list.innerHTML = filtered.map(b => `
-                <tr class="border-b border-gray-50 hover:bg-gray-50 transition-colors">
-                    <td class="px-8 py-4 font-bold text-gray-800">${b.name}</td>
-                    <td class="px-8 py-4 text-xs text-gray-400">${b.memberIds?.length || 0} Members</td>
-                    <td class="px-8 py-4 text-right">
-                        <button class="text-blue-600 font-bold text-xs">Edit</button>
+            const filtered = bandsData.filter(b => {
+                if (b.isArchived) return false;
+                const m = resolveBandMemberData(b.memberIds);
+                const matchName = (b.name||"").toLowerCase().includes(q);
+                const matchId = (b.id||"").toLowerCase().includes(q);
+                const matchMember = m.names.some(n => n.toLowerCase().includes(q));
+                return matchName || matchId || matchMember;
+            });
+            container.innerHTML = filtered.map(band => {
+                const membersNames = (band.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "Unknown").join(', ');
+                return `<tr onclick="showBandDetail('${band.id}')" class="cursor-pointer hover:bg-gray-50 border-b border-gray-50 text-left">
+                    <td class="px-8 py-5 flex items-center gap-3">
+                        ${band.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-lg object-cover">` : `<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold">${(band.name || "?")[0]}</div>`}
+                        <div><span class="font-bold text-gray-800 block">${band.name || 'No Name'}</span><span class="text-[9px] text-gray-400 font-bold uppercase">ID: ${band.id.substring(0,8)}</span></div>
                     </td>
-                </tr>
-            `).join('');
+                    <td class="px-8 py-5 text-xs text-gray-500 font-medium">${membersNames}</td>
+                    <td class="px-8 py-5 text-left">${band.latestCuesheetUrl ? `<a href="${band.latestCuesheetUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-200 transition gap-1.5" onclick="event.stopPropagation()"><i class="fa-solid fa-file-pdf"></i> 開く</a>` : `<span class="text-gray-300 text-[10px] font-bold">未提出</span>`}</td>
+                    <td class="px-8 py-5 text-right"><button class="text-blue-600 font-bold text-xs hover:underline">Edit</button></td>
+                </tr>`}).join('');
         };
 
-        const renderUsers = () => {
-            const grid = document.getElementById('users-grid-container');
+        window.renderCuesheets = () => {
+            const container = document.getElementById('cuesheets-list-container');
+            if (!container) return;
+            const q = cueSearchQuery.toLowerCase();
+            const filtered = cuesheetsData.filter(c => (c.bandName || "").toLowerCase().includes(q));
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-20 text-center"><p class="text-gray-300 font-bold uppercase text-[10px] tracking-widest">No Cue Sheets Found</p></div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(cue => {
+                const dateStr = cue.createdAt ? (typeof cue.createdAt.toDate === 'function' ? cue.createdAt.toDate() : new Date(cue.createdAt.seconds * 1000)).toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '-';
+                const band = bandsData.find(b => b.id === cue.bandId);
+                return `
+                <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            ${band?.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-xl object-cover">` : `<div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 font-bold">${(cue.bandName||"?")[0]}</div>`}
+                            <div>
+                                <h4 class="font-bold text-gray-800">${cue.bandName || 'Unknown Band'}</h4>
+                                <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">提出日時: ${dateStr}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-2 mt-4">
+                        <a href="${cue.fileUrl}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-600 text-center py-3 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all">
+                            <i class="fa-solid fa-eye mr-1"></i> 表示
+                        </a>
+                        <button onclick="deleteCuesheet('${cue.id}')" class="w-12 h-12 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
+        window.renderUsers = () => {
+            const container = document.getElementById('users-grid-container');
+            if (!container) return;
             const q = userSearchQuery.toLowerCase();
-            const filtered = usersData.filter(u => u.name?.toLowerCase().includes(q) || u.studentId?.includes(q));
-            grid.innerHTML = filtered.map(u => `
-                <div class="bg-white p-5 rounded-3xl border border-gray-100 flex items-center gap-4">
-                    <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 font-bold">
-                        ${u.icon ? `<img src="${u.icon}" class="w-full h-full object-cover rounded-2xl">` : (u.name?.[0] || '?')}
-                    </div>
-                    <div>
-                        <p class="font-bold text-gray-800">${u.name || 'Unknown'}</p>
-                        <p class="text-[10px] text-gray-400 font-bold uppercase">${u.studentId || 'No ID'}</p>
-                    </div>
-                </div>
-            `).join('');
+            let filtered = usersData.filter(u => (u.name||"").toLowerCase().includes(q) || (u.kana||"").toLowerCase().includes(q) || (u.studentId||"").toLowerCase().includes(q));
+            if (userShowOnlyCurrent) {
+                const cutoff = new Date(2003, 3, 2); 
+                filtered = filtered.filter(u => {
+                    if (!u.birthday) return true;
+                    const d = typeof u.birthday.toDate === 'function' ? u.birthday.toDate() : (u.birthday.seconds ? new Date(u.birthday.seconds * 1000) : new Date(u.birthday));
+                    return d >= cutoff;
+                });
+            }
+            filtered.sort((a,b) => userSortOrder === "name" ? (a.kana||a.name||"").localeCompare(b.kana||b.name||"","ja") : (a.birthday?.seconds||0) - (b.birthday?.seconds||0));
+            container.innerHTML = filtered.map(user => `<div onclick="showUserDetail('${user.id}')" class="cursor-pointer p-5 border border-gray-100 rounded-[28px] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-4 bg-white shadow-sm group">
+                <div class="relative">${user.icon ? `<img src="${user.icon}" class="w-14 h-14 rounded-full object-cover border-2 border-indigo-50 shadow-sm">` : `<div class="w-14 h-14 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-full flex items-center justify-center text-indigo-600 font-bold text-xl">${(user.name||"?")[0]}</div>`}</div>
+                <div class="flex-1 min-w-0"><h4 class="font-bold text-gray-800 truncate">${user.name || 'Guest'}</h4><p class="text-[9px] text-gray-400 font-extrabold uppercase tracking-widest truncate">${user.studentId || 'No ID'} | ${Array.isArray(user.part) ? user.part.join(', ') : (user.part || 'No Part')}</p></div></div>`).join('');
         };
 
-        const renderInventory = () => {
-            const grid = document.getElementById('inventory-grid');
-            grid.innerHTML = gearData.map(g => `
-                <div class="bg-white p-6 rounded-[32px] border border-gray-100 relative group">
-                    <div class="flex justify-between items-start mb-4">
-                        <div class="w-10 h-10 bg-gray-50 rounded-xl flex items-center justify-center text-gray-400">
-                            <i class="fa-solid fa-plug"></i>
-                        </div>
-                        <span class="px-2 py-1 rounded-lg text-[8px] font-black uppercase ${g.status === 'ok' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}">
-                            ${g.status === 'ok' ? 'Good' : 'Broken'}
-                        </span>
-                    </div>
-                    <h5 class="font-bold text-gray-800 mb-1">${g.name}</h5>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase mb-4">${g.category || 'Gear'}</p>
-                    <button onclick="toggleGearStatus('${g.id}', '${g.status}')" class="w-full py-2 bg-gray-50 rounded-xl text-[10px] font-bold text-gray-500 hover:bg-gray-100 transition-colors">
-                        状態を変更
-                    </button>
-                </div>
-            `).join('');
+        window.renderReservations = () => {
+            const container = document.getElementById('reservations-list-body');
+            if (!container) return;
+            let filtered = reservationDateFilter ? bookingsData.filter(r => {
+                const d = typeof r.startTime.toDate === 'function' ? r.startTime.toDate() : (r.startTime.seconds ? new Date(r.startTime.seconds * 1000) : new Date(r.startTime));
+                return d.toISOString().split('T')[0] === reservationDateFilter;
+            }) : bookingsData;
+            filtered.sort((a,b) => (a.startTime?.seconds || 0) - (b.startTime?.seconds || 0));
+            container.innerHTML = filtered.map(res => {
+                const s = res.startTime ? (typeof res.startTime.toDate === 'function' ? res.startTime.toDate() : new Date(res.startTime.seconds * 1000)) : null;
+                const ds = s ? s.toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', weekday:'short'}) : '-';
+                const ts = s ? s.getHours() + ":" + String(s.getMinutes()).padStart(2,'0') : '--:--';
+                return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left">
+                    <td class="px-8 py-5 font-bold text-gray-800">${res.bandName || '不明'}</td>
+                    <td class="px-8 py-5 text-xs text-gray-600">${ds}</td>
+                    <td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts}</td>
+                    <td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'合わせ':'イベント'}</span></td>
+                    <td class="px-8 py-5 text-right text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'}">${res.status==='pending'?'承認待ち':'確定'}</td>
+                </tr>`}).join('');
         };
 
-        const renderAnnouncements = () => {
-            const list = document.getElementById('announcements-list');
-            list.innerHTML = announcements.map(a => `
-                <div class="bg-white p-6 rounded-3xl border border-gray-100 flex justify-between items-center group">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="px-2 py-0.5 bg-blue-50 text-blue-600 text-[8px] font-black uppercase rounded-md">${a.tag || 'News'}</span>
-                            <p class="text-xs text-gray-400 font-bold">${a.date || 'Today'}</p>
-                        </div>
-                        <h4 class="font-bold text-gray-800">${a.title}</h4>
-                    </div>
-                    <button onclick="deleteAnnouncement('${a.id}')" class="text-gray-200 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all">
-                        <i class="fa-solid fa-trash-can"></i>
-                    </button>
-                </div>
-            `).join('');
+        // --- ADD CUE SHEET LOGIC ---
+        window.openAddCuesheetModal = () => document.getElementById('add-cuesheet-modal').classList.add('modal-active');
+        window.closeAddCuesheetModal = () => {
+            document.getElementById('add-cuesheet-modal').classList.remove('modal-active');
+            document.getElementById('new-cue-file').value = "";
+            document.getElementById('file-name-label').innerText = "ファイルをタップして選択";
+        };
+        window.updateFileNameLabel = (input) => {
+            const label = document.getElementById('file-name-label');
+            label.innerText = input.files[0] ? input.files[0].name : "ファイルをタップして選択";
+        };
+        const populateBandSelect = () => {
+            const select = document.getElementById('new-cue-band-id');
+            if(!select) return;
+            const currentVal = select.value;
+            select.innerHTML = bandsData.filter(b => !b.isArchived).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
+            if(currentVal) select.value = currentVal;
         };
 
-        // --- Stats ---
-        const updateStats = () => {
-            document.getElementById('stat-band-count').innerText = bandsData.length;
-            document.getElementById('stat-user-count').innerText = usersData.length;
-            document.getElementById('stat-broken-count').innerText = gearData.filter(g => g.status !== 'ok').length;
+        window.handleNewCuesheetSubmit = async () => {
+            const bandId = document.getElementById('new-cue-band-id').value;
+            const file = document.getElementById('new-cue-file').files[0];
+            if(!bandId || !file) return;
+
+            const loader = document.getElementById('add-cuesheet-loader');
+            loader.classList.remove('hidden');
+
+            try {
+                const band = bandsData.find(b => b.id === bandId);
+                const fileUrl = await uploadFileToCatbox(file);
+                
+                // 1. cuesheets コレクションに追加
+                await addDoc(collection(db, 'cuesheets'), {
+                    bandId,
+                    bandName: band.name,
+                    fileUrl,
+                    createdAt: serverTimestamp()
+                });
+
+                // 2. バンド情報の最新URLを更新
+                await updateDoc(doc(db, 'bands', bandId), {
+                    latestCuesheetUrl: fileUrl
+                });
+
+                closeAddCuesheetModal();
+            } catch (err) {
+                console.error(err);
+            }
+            loader.classList.add('hidden');
         };
 
-        // --- Actions ---
-        window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
-        window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
+        // --- MODALS (DETAILS) ---
+        window.showBandDetail = (bandId) => {
+            const band = bandsData.find(b => b.id === bandId);
+            if (!band) return;
+            const modal = document.getElementById('band-detail-modal');
+            const content = document.getElementById('band-modal-content');
+            const memberData = resolveBandMemberData(band.memberIds);
+            const createdAtStr = band.createdAt ? (typeof band.createdAt.toDate === 'function' ? band.createdAt.toDate() : new Date(band.createdAt.seconds * 1000)).toLocaleDateString('ja-JP', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Unknown';
+            const bandPractices = bookingsData.filter(bo => bo.bandId === bandId && bo.type === 'normal').sort((a,b) => (b.startTime?.seconds || 0) - (a.startTime?.seconds || 0));
 
-        window.toggleGearStatus = async (id, current) => {
-            const newStatus = current === 'ok' ? 'broken' : 'ok';
-            await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'inventory', id), { status: newStatus });
-        };
-
-        window.openNewAnnouncementModal = () => {
-            const modal = document.getElementById('common-modal');
-            const content = document.getElementById('modal-content');
             content.innerHTML = `
-                <h3 class="text-xl font-black text-gray-800 mb-6">新規お知らせ</h3>
-                <div class="space-y-4">
-                    <input type="text" id="ann-title" placeholder="タイトル" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-bold">
-                    <textarea id="ann-body" placeholder="内容（任意）" class="w-full p-4 bg-gray-50 rounded-2xl outline-none font-medium h-32"></textarea>
-                    <div class="flex gap-4">
-                        <button onclick="closeCommonModal()" class="flex-1 py-4 font-bold text-gray-400">キャンセル</button>
-                        <button onclick="saveAnnouncement()" class="flex-1 py-4 bg-blue-600 text-white font-bold rounded-2xl shadow-lg shadow-blue-100">投稿する</button>
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full text-left"></div>
+                <div class="px-8 pb-10 -mt-16 text-left relative">
+                    <div id="band-modal-loader" class="uploading-overlay hidden"><i class="fa-solid fa-spinner fa-spin text-blue-600 text-3xl"></i></div>
+                    <div class="flex items-end justify-between mb-8">
+                        <div class="relative group">
+                            <div id="band-icon-preview" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center overflow-hidden">
+                                ${band.icon ? `<img src="${band.icon}" class="w-full h-full object-cover">` : `<div class="text-4xl font-bold text-blue-500">${(band.name||"?")[0]}</div>`}
+                            </div>
+                            <label class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-[40px] opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity">
+                                <i class="fa-solid fa-camera text-white text-2xl"></i>
+                                <input type="file" class="hidden" accept="image/*" onchange="uploadBandIcon(event, '${band.id}')">
+                            </label>
+                        </div>
+                        <div class="pb-2 text-right">
+                            <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">登録日: ${createdAtStr}</p>
+                        </div>
                     </div>
-                </div>
-            `;
+                    <div class="space-y-8">
+                        <div>
+                            <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">バンド名</label>
+                            <input type="text" id="edit-band-name" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all" value="${band.name || ''}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-3">Cueシート</label>
+                            <div class="flex items-center justify-between bg-emerald-50 border border-emerald-100 p-4 rounded-2xl">
+                                <div class="flex items-center gap-3">
+                                    <i class="fa-solid fa-file-pdf text-emerald-600 text-xl"></i>
+                                    <div>
+                                        <p class="text-xs font-bold text-emerald-800">${band.latestCuesheetUrl ? '提出済み' : '未提出'}</p>
+                                        ${band.latestCuesheetUrl ? `<a href="${band.latestCuesheetUrl}" target="_blank" class="text-[10px] font-bold text-emerald-600 underline">ファイルを表示</a>` : ''}
+                                    </div>
+                                </div>
+                                <label class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-xl text-[10px] font-bold cursor-pointer transition-colors">
+                                    更新
+                                    <input type="file" class="hidden" onchange="uploadCueSheet(event, '${band.id}')">
+                                </label>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-3 text-left">メンバー構成</label>
+                            <div class="grid grid-cols-1 gap-2">
+                                ${memberData.full.map(m => `<div class="flex items-center justify-between bg-gray-50 p-3 rounded-2xl border border-gray-100"><div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-[10px] font-bold text-blue-600">${(m.name||"?")[0]}</div><div><p class="text-xs font-bold text-gray-800">${m.name}</p></div></div></div>`).join('')}
+                            </div>
+                        </div>
+                        <div class="pt-4 flex gap-4">
+                            <button onclick="saveBandChanges('${band.id}')" class="flex-1 bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl">設定を保存する</button>
+                            <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="px-6 border border-gray-100 rounded-[22px] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"><i class="fa-solid fa-box-archive"></i></button>
+                        </div>
+                    </div>
+                </div>`;
             modal.classList.add('modal-active');
         };
 
-        window.saveAnnouncement = async () => {
-            const title = document.getElementById('ann-title').value;
-            const body = document.getElementById('ann-body').value;
-            if(!title) return;
-            await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'announcements'), {
-                title, body, date: new Date().toLocaleDateString('ja-JP'), tag: '公式'
-            });
-            closeCommonModal();
+        window.showUserDetail = (userId) => {
+            const user = usersData.find(u => u.id === userId);
+            if (!user) return;
+            const modal = document.getElementById('user-detail-modal');
+            const content = document.getElementById('user-modal-content');
+            const userBands = bandsData.filter(b => b.memberIds && b.memberIds.includes(userId));
+            const partsStr = Array.isArray(user.part) ? user.part.join(', ') : (user.part || 'None');
+            content.innerHTML = `<div class="bg-gradient-to-br from-indigo-500 to-blue-600 h-32 w-full"></div><div class="px-8 pb-10 -mt-16 text-left"><div class="relative mb-6">${user.icon ? `<img src="${user.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl object-cover bg-white">` : `<div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center text-4xl font-bold text-indigo-100">${(user.name||"?")[0]}</div>`}</div><h3 class="text-3xl font-extrabold text-gray-800">${user.name || 'Guest'}</h3><p class="text-indigo-500 font-bold text-sm mt-1 tracking-wider uppercase mb-8">${user.kana || ''}</p><div class="grid grid-cols-2 gap-6"><div class="space-y-1"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">学籍番号</p><p class="font-bold text-gray-700">${user.studentId || '-'}</p></div><div class="space-y-1"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">パート</p><p class="font-bold text-gray-700">${partsStr}</p></div></div><div class="mt-8"><p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3">所属バンド</p><div class="flex flex-wrap gap-2">${userBands.length > 0 ? userBands.map(b => `<span class="bg-gray-50 border border-gray-100 px-4 py-2 rounded-2xl text-xs font-bold text-gray-600">${b.name}</span>`).join('') : '<p class="text-xs text-gray-400">所属なし</p>'}</div></div></div>`;
+            modal.classList.add('modal-active');
         };
 
-        window.deleteAnnouncement = async (id) => {
-            if(confirm('このお知らせを削除しますか？')) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'announcements', id));
+        window.closeUserDetail = () => document.getElementById('user-detail-modal').classList.remove('modal-active');
+        window.closeBandDetail = () => document.getElementById('band-detail-modal').classList.remove('modal-active');
+
+        // --- UPDATES ---
+        window.uploadBandIcon = async (e, bandId) => {
+            const file = e.target.files[0]; if (!file) return;
+            const loader = document.getElementById('band-modal-loader');
+            loader.classList.remove('hidden');
+            try {
+                const url = await uploadFileToCatbox(file);
+                await updateDoc(doc(db, 'bands', bandId), { icon: url });
+                document.getElementById('band-icon-preview').innerHTML = `<img src="${url}" class="w-full h-full object-cover">`;
+            } catch (err) { console.error(err); }
+            loader.classList.add('hidden');
+        };
+
+        window.uploadCueSheet = async (e, bandId) => {
+            const file = e.target.files[0]; if (!file) return;
+            const loader = document.getElementById('band-modal-loader');
+            loader.classList.remove('hidden');
+            try {
+                const url = await uploadFileToCatbox(file);
+                const band = bandsData.find(b => b.id === bandId);
+                await addDoc(collection(db, 'cuesheets'), {
+                    bandId, bandName: band.name, fileUrl: url, createdAt: serverTimestamp()
+                });
+                await updateDoc(doc(db, 'bands', bandId), { latestCuesheetUrl: url });
+                showBandDetail(bandId); 
+            } catch (err) { console.error(err); }
+            loader.classList.add('hidden');
+        };
+
+        window.saveBandChanges = async (bandId) => {
+            const name = document.getElementById('edit-band-name').value;
+            try { await updateDoc(doc(db, 'bands', bandId), { name }); closeBandDetail(); } catch (e) { console.error(e); }
+        };
+
+        window.toggleBandArchive = async (bandId, current) => {
+            try { await updateDoc(doc(db, 'bands', bandId), { isArchived: !current }); closeBandDetail(); } catch (e) { console.error(e); }
+        };
+
+        window.saveBookingSettings = async () => {
+            const dbDays = parseInt(document.getElementById('days-before').value);
+            const dbTime = document.getElementById('exec-time').value;
+            const payload = {
+                reservationMode: currentBookingSettings.reservationMode,
+                lotteryConfig: { mode: currentBookingSettings.mode, daysBefore: dbDays, time: dbTime }
+            };
+            try { await setDoc(doc(db, 'system', 'settings'), payload, { merge: true }); } catch (e) { console.error(e); }
+        };
+
+        const updateStats = () => {
+            const b = document.getElementById('stat-band-count'), c = document.getElementById('stat-cue-count'), u = document.getElementById('stat-user-count');
+            if(b) b.innerText = bandsData.filter(x => !x.isArchived).length;
+            if(c) c.innerText = cuesheetsData.length;
+            if(u) {
+                const cutoff = new Date(2003, 3, 2); 
+                u.innerText = usersData.filter(user => {
+                    if (!user.birthday) return true;
+                    const d = typeof user.birthday.toDate === 'function' ? user.birthday.toDate() : (user.birthday.seconds ? new Date(user.birthday.seconds * 1000) : new Date(user.birthday));
+                    return d >= cutoff;
+                }).length;
             }
         };
 
-        window.exportUsersToCSV = () => {
-            const headers = ['Name', 'StudentId', 'Part', 'Role'];
-            const rows = usersData.map(u => [u.name, u.studentId, u.part, u.role].join(','));
-            const csvContent = "data:text/csv;charset=utf-8," + headers.join(',') + "\n" + rows.join("\n");
-            const encodedUri = encodeURI(csvContent);
-            const link = document.createElement("a");
-            link.setAttribute("href", encodedUri);
-            link.setAttribute("download", `lmc_members_${new Date().toISOString().split('T')[0]}.csv`);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        const renderBookingSettingsUI = () => {
+            const fcBtn = document.getElementById('mode-first-come');
+            const ltBtn = document.getElementById('mode-lottery');
+            const ltPanel = document.getElementById('lottery-settings-panel');
+            if(!fcBtn || !ltBtn) return;
+            if (currentBookingSettings.reservationMode === 'first_come') {
+                fcBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold shadow-sm text-center";
+                ltBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold text-center";
+                ltPanel.classList.add('hidden');
+            } else {
+                ltBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold shadow-sm text-center";
+                fcBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold text-center";
+                ltPanel.classList.remove('hidden');
+            }
+            const exAuto = document.getElementById('exec-auto');
+            const exManual = document.getElementById('exec-manual');
+            const autoInputs = document.getElementById('auto-lottery-inputs');
+            if (currentBookingSettings.mode === 'auto') {
+                exAuto.className = "flex-1 bg-white text-indigo-600 py-2 rounded-lg text-[9px] font-extrabold shadow-sm text-center";
+                exManual.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold text-center";
+                autoInputs.classList.remove('hidden');
+            } else {
+                exManual.className = "flex-1 bg-white text-indigo-600 py-2 rounded-lg text-[9px] font-extrabold shadow-sm text-center";
+                exAuto.className = "flex-1 text-gray-400 py-2 rounded-lg text-[9px] font-extrabold text-center";
+                autoInputs.classList.add('hidden');
+            }
         };
 
-        window.closeCommonModal = () => document.getElementById('common-modal').classList.remove('modal-active');
-        window.handleSignOut = () => { liff.logout(); window.location.reload(); };
-
-        initLIFF();
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
