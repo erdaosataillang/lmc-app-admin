@@ -403,7 +403,7 @@
                         <button onclick="setNewBookingType('event')" id="type-btn-event" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-gray-400 transition-all">イベント</button>
                     </div>
                 </div>
-                <button onclick="handleNewBookingSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">予約を確定する</button>
+                <button onclick="handleNewBookingSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">予約を登録する</button>
             </div>
         </div>
     </div>
@@ -696,7 +696,7 @@
                     startTime: Timestamp.fromDate(startDateTime),
                     endTime: Timestamp.fromDate(endDateTime),
                     type: newBookingType,
-                    status: 'confirmed', // 管理者登録は即時確定
+                    status: 'pending', // 承認待ち状態で登録
                     createdAt: serverTimestamp()
                 });
                 closeAddBookingModal();
