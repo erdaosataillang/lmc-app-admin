@@ -34,6 +34,10 @@
         
         /* Loading Overlay for Uploads */
         .uploading-overlay { position: absolute; inset: 0; background: rgba(255,255,255,0.7); display: flex; align-items: center; justify-content: center; z-index: 10; border-radius: inherit; }
+
+        /* Custom Scrollbar for dropdown */
+        .custom-scroll::-webkit-scrollbar { width: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
     </style>
 </head>
 <body class="min-h-screen flex overflow-hidden">
@@ -378,14 +382,38 @@
             </button>
             <h3 id="booking-modal-title" class="text-xl font-black text-gray-800 mb-6">新規予約の登録</h3>
             <div class="space-y-6">
-                <div>
-                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">予約バンド</label>
-                    <select id="new-booking-band-id" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all"></select>
+                <!-- 検索機能付きバンド選択 -->
+                <div class="space-y-2 relative">
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">予約バンド</label>
+                    <div class="relative">
+                        <input type="text" id="band-selector-input" autocomplete="off" 
+                               onfocus="toggleBandDropdown(true)" 
+                               oninput="filterBandsForDropdown(this.value)"
+                               placeholder="バンドを検索..." 
+                               class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none"></i>
+                    </div>
+                    <input type="hidden" id="new-booking-band-id">
+                    <!-- ドロップダウンリスト -->
+                    <div id="band-dropdown-container" class="hidden absolute z-50 left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl max-h-48 overflow-y-auto custom-scroll">
+                        <ul id="band-dropdown-list" class="py-2"></ul>
+                    </div>
                 </div>
-                <div>
-                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">日付</label>
-                    <input type="date" id="new-booking-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">日付</label>
+                        <input type="date" id="new-booking-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">ステータス</label>
+                        <select id="new-booking-status" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none">
+                            <option value="pending">承認待ち (Pending)</option>
+                            <option value="confirmed">確定済 (Confirmed)</option>
+                        </select>
+                    </div>
                 </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">開始時間</label>
@@ -532,7 +560,7 @@
             const dbStatus = document.getElementById('db-status');
             if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Connected';
 
-            onSnapshot(collection(db, 'bands'), s => { bandsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderBands(); updateStats(); populateBandSelects(); });
+            onSnapshot(collection(db, 'bands'), s => { bandsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderBands(); updateStats(); populateBandSelects(); updateBandDropdown(); });
             onSnapshot(collection(db, 'users'), s => { usersData = s.docs.map(d => ({id:d.id, ...d.data()})); renderUsers(); renderBands(); updateStats(); });
             onSnapshot(collection(db, 'bookings'), s => { bookingsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderReservations(); });
             onSnapshot(collection(db, 'cuesheets'), s => { cuesheetsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderCuesheets(); updateStats(); });
@@ -647,7 +675,7 @@
                     <td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts} - ${te}</td>
                     <td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'練習':'イベント'}</span></td>
                     <td class="px-8 py-5 text-right flex items-center justify-end gap-3">
-                        <span class="text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'} mr-2">${res.status==='pending'?'承認待ち':'確定'}</span>
+                        <span class="text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'} mr-2">${res.status==='pending'?'承認待ち':'確定済'}</span>
                         <button onclick="openEditBookingModal('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all"><i class="fa-solid fa-pen-to-square"></i></button>
                         <button onclick="requestDeleteBooking('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"><i class="fa-solid fa-trash-can"></i></button>
                     </td>
@@ -662,10 +690,12 @@
             editingBookingId = null;
             document.getElementById('booking-modal-title').innerText = "新規予約の登録";
             document.getElementById('booking-submit-btn').innerText = "予約を登録する";
-            document.getElementById('new-booking-band-id').value = bandsData[0]?.id || "";
+            document.getElementById('new-booking-band-id').value = "";
+            document.getElementById('band-selector-input').value = "";
             document.getElementById('new-booking-date').value = "";
             document.getElementById('new-booking-time').value = "";
             document.getElementById('new-booking-end-time').value = "";
+            document.getElementById('new-booking-status').value = "pending";
             setNewBookingType('normal');
             document.getElementById('add-booking-modal').classList.add('modal-active');
         };
@@ -677,7 +707,9 @@
             document.getElementById('booking-modal-title').innerText = "予約内容の編集";
             document.getElementById('booking-submit-btn').innerText = "変更を保存する";
             
+            const band = bandsData.find(b => b.id === res.bandId);
             document.getElementById('new-booking-band-id').value = res.bandId;
+            document.getElementById('band-selector-input').value = band ? band.name : (res.bandName || "");
             
             const start = res.startTime ? (typeof res.startTime.toDate === 'function' ? res.startTime.toDate() : new Date(res.startTime.seconds * 1000)) : new Date();
             const end = res.endTime ? (typeof res.endTime.toDate === 'function' ? res.endTime.toDate() : new Date(res.endTime.seconds * 1000)) : null;
@@ -688,6 +720,7 @@
                 document.getElementById('new-booking-end-time').value = end.getHours().toString().padStart(2,'0') + ":" + end.getMinutes().toString().padStart(2,'0');
             }
             
+            document.getElementById('new-booking-status').value = res.status || "pending";
             setNewBookingType(res.type || 'normal');
             document.getElementById('add-booking-modal').classList.add('modal-active');
         };
@@ -713,10 +746,45 @@
 
         const populateBandSelects = () => {
             const cueSel = document.getElementById('new-cue-band-id');
-            const bookSel = document.getElementById('new-booking-band-id');
             const html = bandsData.filter(b => !b.isArchived).map(b => `<option value="${b.id}">${b.name}</option>`).join('');
             if(cueSel) cueSel.innerHTML = html;
-            if(bookSel) bookSel.innerHTML = html;
+        };
+
+        // --- バンド検索プルダウン制御 ---
+        window.toggleBandDropdown = (show) => {
+            const container = document.getElementById('band-dropdown-container');
+            if(show) {
+                container.classList.remove('hidden');
+                updateBandDropdown("");
+            } else {
+                setTimeout(() => container.classList.add('hidden'), 200);
+            }
+        };
+
+        window.filterBandsForDropdown = (val) => {
+            updateBandDropdown(val.toLowerCase());
+        };
+
+        window.updateBandDropdown = (filter = "") => {
+            const list = document.getElementById('band-dropdown-list');
+            if(!list) return;
+            const filtered = bandsData.filter(b => !b.isArchived && (b.name||"").toLowerCase().includes(filter));
+            if(filtered.length === 0) {
+                list.innerHTML = `<li class="px-5 py-3 text-[10px] font-bold text-gray-300 uppercase tracking-widest text-center">No Bands Found</li>`;
+                return;
+            }
+            list.innerHTML = filtered.map(b => `
+                <li onclick="selectBandForBooking('${b.id}', '${b.name.replace(/'/g, "\\'")}')" class="px-5 py-3 hover:bg-blue-50 cursor-pointer flex items-center gap-3 transition-all border-b border-gray-50 last:border-none">
+                    <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400">${(b.name||"?")[0]}</div>
+                    <span class="text-sm font-bold text-gray-700">${b.name}</span>
+                </li>
+            `).join('');
+        };
+
+        window.selectBandForBooking = (id, name) => {
+            document.getElementById('new-booking-band-id').value = id;
+            document.getElementById('band-selector-input').value = name;
+            document.getElementById('band-dropdown-container').classList.add('hidden');
         };
 
         // --- CONFIRM DIALOG LOGIC ---
@@ -770,6 +838,7 @@
             const dateVal = document.getElementById('new-booking-date').value;
             const timeVal = document.getElementById('new-booking-time').value;
             const endTimeVal = document.getElementById('new-booking-end-time').value;
+            const statusVal = document.getElementById('new-booking-status').value;
             if(!bandId || !dateVal || !timeVal || !endTimeVal) return;
             
             const startDateTime = new Date(`${dateVal}T${timeVal}:00`);
@@ -778,11 +847,11 @@
             
             const payload = {
                 bandId,
-                bandName: band.name,
+                bandName: band ? band.name : document.getElementById('band-selector-input').value,
                 startTime: Timestamp.fromDate(startDateTime),
                 endTime: Timestamp.fromDate(endDateTime),
                 type: newBookingType,
-                status: 'pending' // 常に承認待ちで保存
+                status: statusVal
             };
 
             try {
@@ -871,6 +940,13 @@
                 ltPanel.classList.remove('hidden');
             }
         };
+
+        // 外側をクリックしたらドロップダウンを閉じる
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#band-selector-input')) {
+                document.getElementById('band-dropdown-container')?.classList.add('hidden');
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', initApp);
     </script>
