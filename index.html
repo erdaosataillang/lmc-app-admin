@@ -197,6 +197,13 @@
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" oninput="handleBandSearch(event)" placeholder="バンド名・メンバー名・かな・IDで検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
                             </div>
+                            <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
+                                <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest whitespace-nowrap">アーカイブを表示</span>
+                                <label class="switch">
+                                    <input type="checkbox" onchange="handleArchiveToggle(event)">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
                             <button onclick="openAddBandModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-blue-100 text-left">
                                 <i class="fa-solid fa-plus"></i> バンドを追加
                             </button>
@@ -597,7 +604,8 @@
         let newBookingType = 'normal';
         let editingBookingId = null;
         let bandSearchQuery = "", userSearchQuery = "", cueSearchQuery = "", eventSearchQuery = "", userSortOrder = "name", reservationDateFilter = "";
-        let userShowOnlyCurrent = true; 
+        let userShowOnlyCurrent = true;
+        let showArchivedBands = false;
 
         const tabInfo = {
             'dashboard': { title: 'Dashboard', desc: 'システムの概要と統計' },
@@ -636,6 +644,10 @@
         window.updateLotteryExecMode = (lMode) => { 
             currentBookingSettings.mode = lMode; 
             renderBookingSettingsUI(); 
+        };
+        window.handleArchiveToggle = (e) => {
+            showArchivedBands = e.target.checked;
+            renderBands();
         };
         window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
         window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
@@ -756,18 +768,38 @@
             const container = document.getElementById('bands-list-body');
             if (!container) return;
             const q = bandSearchQuery.toLowerCase();
-            const filtered = bandsData.filter(b => {
-                if (b.isArchived) return false;
+            
+            let filtered = bandsData.filter(b => {
+                if (!showArchivedBands && b.isArchived) return false;
+                
                 const members = (b.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "").join(" ").toLowerCase();
                 const matchName = (b.name||"").toLowerCase().includes(q);
-                return matchName || members.includes(q);
+                const matchId = (b.id||"").toLowerCase().includes(q);
+                return matchName || matchId || members.includes(q);
             });
+
+            filtered.sort((a, b) => {
+                if (a.isArchived !== b.isArchived) {
+                    return a.isArchived ? 1 : -1;
+                }
+                return (a.name || "").localeCompare(b.name || "", "ja");
+            });
+
             container.innerHTML = filtered.map(band => {
                 const membersNames = (band.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "Unknown").join(', ');
-                return `<tr onclick="showBandDetail('${band.id}')" class="cursor-pointer hover:bg-gray-50 border-b border-gray-50 text-left">
+                const rowClass = band.isArchived ? "bg-gray-100 opacity-60 grayscale" : "hover:bg-gray-50";
+                const statusBadge = band.isArchived ? `<span class="bg-gray-200 text-gray-500 px-2 py-0.5 rounded text-[9px] font-bold uppercase ml-2">Archived</span>` : "";
+
+                return `<tr onclick="showBandDetail('${band.id}')" class="cursor-pointer border-b border-gray-50 text-left transition-all ${rowClass}">
                     <td class="px-8 py-5 flex items-center gap-3 text-left">
                         ${band.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-lg object-cover">` : `<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold text-left">${(band.name || "?")[0]}</div>`}
-                        <div class="text-left"><span class="font-bold text-gray-800 block">${band.name || 'No Name'}</span><span class="text-[9px] text-gray-400 font-bold uppercase">ID: ${band.id.substring(0,8)}</span></div>
+                        <div class="text-left">
+                            <div class="flex items-center">
+                                <span class="font-bold text-gray-800 block">${band.name || 'No Name'}</span>
+                                ${statusBadge}
+                            </div>
+                            <span class="text-[9px] text-gray-400 font-bold uppercase">ID: ${band.id.substring(0,8)}</span>
+                        </div>
                     </td>
                     <td class="px-8 py-5 text-xs text-gray-500 font-medium">${membersNames}</td>
                     <td class="px-8 py-5">
