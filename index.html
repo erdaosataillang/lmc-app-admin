@@ -197,9 +197,9 @@
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" oninput="handleBandSearch(event)" placeholder="バンド名・メンバー名・かな・IDで検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
                             </div>
-                            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">
-                                Bands Registry
-                            </div>
+                            <button onclick="openAddBandModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-blue-100 text-left">
+                                <i class="fa-solid fa-plus"></i> バンドを追加
+                            </button>
                         </div>
                     </div>
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden text-left">
@@ -493,6 +493,21 @@
         </div>
     </div>
 
+    <!-- Add Band Modal -->
+    <div id="add-band-modal" onclick="closeAddBandModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
+            <button onclick="closeAddBandModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm text-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-black text-gray-800 mb-6 text-left">バンドの新規作成</h3>
+            <div class="space-y-6 text-left">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">バンド名</label>
+                    <input type="text" id="new-band-name" placeholder="バンド名を入力" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
+                </div>
+                <button onclick="handleNewBandSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 text-center">作成する</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Add Song Modal -->
     <div id="add-song-modal" onclick="closeAddSongModal()" class="hidden fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
         <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
@@ -624,7 +639,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal(); closeAddEventModal(); closeAddSongModal();
+                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal(); closeAddEventModal(); closeAddSongModal(); closeAddBandModal();
             }
         });
 
@@ -903,6 +918,13 @@
         };
         window.closeAddSongModal = () => document.getElementById('add-song-modal').classList.remove('modal-active');
 
+        // New Band Modal
+        window.openAddBandModal = () => {
+            document.getElementById('new-band-name').value = "";
+            document.getElementById('add-band-modal').classList.add('modal-active');
+        };
+        window.closeAddBandModal = () => document.getElementById('add-band-modal').classList.remove('modal-active');
+
         const generateRandomId = (length) => {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
             let result = '';
@@ -910,6 +932,21 @@
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return result;
+        };
+
+        window.handleNewBandSubmit = async () => {
+            const name = document.getElementById('new-band-name').value;
+            if(!name) return;
+            try {
+                await addDoc(publicPath('bands'), {
+                    name: name,
+                    memberIds: [],
+                    songs: [],
+                    isArchived: false,
+                    createdAt: serverTimestamp()
+                });
+                closeAddBandModal();
+            } catch (e) { console.error(e); }
         };
 
         window.handleAddSongSubmit = async () => {
