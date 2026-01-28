@@ -528,11 +528,11 @@
         </div>
     </div>
 
-    <!-- Add Song Modal -->
+    <!-- Add/Edit Song Modal -->
     <div id="add-song-modal" onclick="closeAddSongModal()" class="hidden fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
         <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
             <button onclick="closeAddSongModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm text-center"><i class="fa-solid fa-xmark"></i></button>
-            <h3 class="text-xl font-black text-gray-800 mb-6 text-left">曲を追加</h3>
+            <h3 id="song-modal-title" class="text-xl font-black text-gray-800 mb-6 text-left">曲を追加</h3>
             <div class="space-y-6 text-left">
                 <input type="hidden" id="new-song-band-id">
                 <div>
@@ -552,7 +552,7 @@
                         <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none"></i>
                     </div>
                 </div>
-                <button onclick="handleAddSongSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 text-center">追加する</button>
+                <button id="song-modal-submit-btn" onclick="handleAddSongSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 text-center">追加する</button>
             </div>
         </div>
     </div>
@@ -603,6 +603,7 @@
         let currentBookingSettings = { reservationMode: 'first_come', mode: 'manual', daysBefore: 7, time: '12:00' };
         let newBookingType = 'normal';
         let editingBookingId = null;
+        let editingSongId = null; // Added for song editing
         let bandSearchQuery = "", userSearchQuery = "", cueSearchQuery = "", eventSearchQuery = "", userSortOrder = "name", reservationDateFilter = "";
         let userShowOnlyCurrent = true;
         let showArchivedBands = false;
@@ -949,15 +950,34 @@
         };
         window.closeAddEventModal = () => document.getElementById('add-event-modal').classList.remove('modal-active');
 
-        // New Song Modal
-        window.openAddSongModal = (bandId) => {
+        // New/Edit Song Modal
+        window.openAddSongModal = (bandId, songId = null) => {
             document.getElementById('new-song-band-id').value = bandId;
-            document.getElementById('new-song-title').value = '';
-            document.getElementById('new-song-duration').value = '';
-            
             const eventSelect = document.getElementById('new-song-event');
             eventSelect.innerHTML = '<option value="">イベントを選択（任意）</option>' + 
                 eventsData.map(e => `<option value="${e.id}">${e.event} (${e.startDate || e.date})</option>`).join('');
+
+            if (songId) {
+                // Edit Mode
+                const band = bandsData.find(b => b.id === bandId);
+                const song = band.songs.find(s => s.id === songId);
+                if (!song) return;
+
+                editingSongId = songId;
+                document.getElementById('song-modal-title').innerText = "曲を編集";
+                document.getElementById('song-modal-submit-btn').innerText = "保存する";
+                document.getElementById('new-song-title').value = song.title || '';
+                document.getElementById('new-song-duration').value = song.duration || '';
+                document.getElementById('new-song-event').value = song.eventId || '';
+            } else {
+                // Add Mode
+                editingSongId = null;
+                document.getElementById('song-modal-title').innerText = "曲を追加";
+                document.getElementById('song-modal-submit-btn').innerText = "追加する";
+                document.getElementById('new-song-title').value = '';
+                document.getElementById('new-song-duration').value = '';
+                document.getElementById('new-song-event').value = '';
+            }
                 
             document.getElementById('add-song-modal').classList.add('modal-active');
         };
@@ -1036,22 +1056,48 @@
             
             if(!title) return;
             
-            const newSong = {
-                id: generateRandomId(15),
-                title: title,
-                duration: duration,
-                eventId: eventId
-            };
-            
             try {
-                await updateDoc(publicDoc('bands', bandId), {
-                    songs: arrayUnion(newSong)
-                });
+                if (editingSongId) {
+                    // Update existing song
+                    const band = bandsData.find(b => b.id === bandId);
+                    const updatedSongs = band.songs.map(s => {
+                        if (s.id === editingSongId) {
+                            return { ...s, title, duration, eventId };
+                        }
+                        return s;
+                    });
+                    
+                    await updateDoc(publicDoc('bands', bandId), {
+                        songs: updatedSongs
+                    });
+                } else {
+                    // Add new song
+                    const newSong = {
+                        id: generateRandomId(15),
+                        title: title,
+                        duration: duration,
+                        eventId: eventId
+                    };
+                    await updateDoc(publicDoc('bands', bandId), {
+                        songs: arrayUnion(newSong)
+                    });
+                }
                 closeAddSongModal();
                 showBandDetail(bandId); 
             } catch(e) {
                 console.error(e);
             }
+        };
+
+        // Function to delete song
+        window.deleteSong = async (bandId, songId) => {
+            if(!confirm("本当にこの曲を削除しますか？")) return;
+            try {
+                const band = bandsData.find(b => b.id === bandId);
+                const updatedSongs = band.songs.filter(s => s.id !== songId);
+                await updateDoc(publicDoc('bands', bandId), { songs: updatedSongs });
+                showBandDetail(bandId);
+            } catch(e) { console.error(e); }
         };
 
         window.handleNewEventSubmit = async () => {
@@ -1336,8 +1382,10 @@
                                                 <p class="font-bold text-gray-800 text-sm truncate">${song.title || 'タイトルなし'}</p>
                                                 ${evt ? `<p class="text-[9px] text-gray-400 font-bold truncate"><i class="fa-solid fa-calendar-check mr-1"></i>${evt.event}</p>` : ''}
                                             </div>
-                                            <div class="text-right">
+                                            <div class="flex items-center gap-2">
                                                 <span class="text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-md">${song.duration || '--:--'}</span>
+                                                <button onclick="openAddSongModal('${band.id}', '${song.id}')" class="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-blue-500 transition-colors"><i class="fa-solid fa-pen"></i></button>
+                                                <button onclick="deleteSong('${band.id}', '${song.id}')" class="w-8 h-8 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors"><i class="fa-solid fa-trash"></i></button>
                                             </div>
                                         </div>
                                     `}).join('') : '<div class="p-6 text-center text-xs text-gray-400 font-bold">登録された曲はありません</div>'}
