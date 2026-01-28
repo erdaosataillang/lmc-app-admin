@@ -493,6 +493,35 @@
         </div>
     </div>
 
+    <!-- Add Song Modal -->
+    <div id="add-song-modal" onclick="closeAddSongModal()" class="hidden fixed inset-0 z-[60] bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
+            <button onclick="closeAddSongModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm text-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-black text-gray-800 mb-6 text-left">曲を追加</h3>
+            <div class="space-y-6 text-left">
+                <input type="hidden" id="new-song-band-id">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">曲名</label>
+                    <input type="text" id="new-song-title" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left" placeholder="曲名を入力">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">長さ (オプション)</label>
+                    <input type="text" id="new-song-duration" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left" placeholder="例: 4:30">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">演奏イベント (オプション)</label>
+                    <div class="relative">
+                        <select id="new-song-event" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none text-left">
+                            <!-- JSで生成 -->
+                        </select>
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none"></i>
+                    </div>
+                </div>
+                <button onclick="handleAddSongSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 text-center">追加する</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirm Dialog Modal -->
     <div id="confirm-modal" onclick="closeConfirmModal()" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 text-left">
         <div onclick="event.stopPropagation()" class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center animate-in zoom-in duration-200">
@@ -510,7 +539,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signInAnonymously, signInWithCustomToken, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, deleteDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, deleteDoc, serverTimestamp, Timestamp, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Environment variables for Firebase
         let firebaseConfig;
@@ -595,7 +624,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal(); closeAddEventModal();
+                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal(); closeAddEventModal(); closeAddSongModal();
             }
         });
 
@@ -859,6 +888,55 @@
             document.getElementById('add-event-modal').classList.add('modal-active');
         };
         window.closeAddEventModal = () => document.getElementById('add-event-modal').classList.remove('modal-active');
+
+        // New Song Modal
+        window.openAddSongModal = (bandId) => {
+            document.getElementById('new-song-band-id').value = bandId;
+            document.getElementById('new-song-title').value = '';
+            document.getElementById('new-song-duration').value = '';
+            
+            const eventSelect = document.getElementById('new-song-event');
+            eventSelect.innerHTML = '<option value="">イベントを選択（任意）</option>' + 
+                eventsData.map(e => `<option value="${e.id}">${e.event} (${e.startDate || e.date})</option>`).join('');
+                
+            document.getElementById('add-song-modal').classList.add('modal-active');
+        };
+        window.closeAddSongModal = () => document.getElementById('add-song-modal').classList.remove('modal-active');
+
+        const generateRandomId = (length) => {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        };
+
+        window.handleAddSongSubmit = async () => {
+            const bandId = document.getElementById('new-song-band-id').value;
+            const title = document.getElementById('new-song-title').value;
+            const duration = document.getElementById('new-song-duration').value;
+            const eventId = document.getElementById('new-song-event').value;
+            
+            if(!title) return;
+            
+            const newSong = {
+                id: generateRandomId(15),
+                title: title,
+                duration: duration,
+                eventId: eventId
+            };
+            
+            try {
+                await updateDoc(publicDoc('bands', bandId), {
+                    songs: arrayUnion(newSong)
+                });
+                closeAddSongModal();
+                showBandDetail(bandId); 
+            } catch(e) {
+                console.error(e);
+            }
+        };
 
         window.handleNewEventSubmit = async () => {
             const name = document.getElementById('new-event-name').value;
@@ -1131,22 +1209,25 @@
                             </div>
                             <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
                                 <div class="divide-y divide-gray-50">
-                                    ${bandSongs.length > 0 ? bandSongs.map((song, idx) => `
+                                    ${bandSongs.length > 0 ? bandSongs.map((song, idx) => {
+                                        const evt = eventsData.find(e => e.id === song.eventId);
+                                        return `
                                         <div class="p-4 flex items-center gap-4 group">
                                             <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-xs group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
                                                 ${idx + 1}
                                             </div>
                                             <div class="flex-1 min-w-0">
                                                 <p class="font-bold text-gray-800 text-sm truncate">${song.title || 'タイトルなし'}</p>
+                                                ${evt ? `<p class="text-[9px] text-gray-400 font-bold truncate"><i class="fa-solid fa-calendar-check mr-1"></i>${evt.event}</p>` : ''}
                                             </div>
                                             <div class="text-right">
                                                 <span class="text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-md">${song.duration || '--:--'}</span>
                                             </div>
                                         </div>
-                                    `).join('') : '<div class="p-6 text-center text-xs text-gray-400 font-bold">登録された曲はありません</div>'}
+                                    `}).join('') : '<div class="p-6 text-center text-xs text-gray-400 font-bold">登録された曲はありません</div>'}
                                 </div>
                                 <div class="p-2 border-t border-gray-50">
-                                    <button class="w-full py-3 text-blue-600 font-bold text-xs flex items-center justify-center gap-2 hover:bg-blue-50 rounded-xl transition-colors">
+                                    <button onclick="openAddSongModal('${band.id}')" class="w-full py-3 text-blue-600 font-bold text-xs flex items-center justify-center gap-2 hover:bg-blue-50 rounded-xl transition-colors">
                                         <i class="fa-solid fa-plus"></i> 曲を追加
                                     </button>
                                 </div>
