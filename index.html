@@ -505,6 +505,11 @@
                 </div>
                 <div>
                     <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">メンバー選択</label>
+                    <!-- 検索ボックスを追加 -->
+                    <div class="mb-2 relative">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                        <input type="text" id="new-band-member-search" oninput="handleMemberSearch(this.value)" placeholder="名前・かなで検索..." class="w-full bg-gray-50 border border-gray-100 rounded-xl pl-9 pr-4 py-2 text-xs font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
+                    </div>
                     <div class="h-48 overflow-y-auto border border-gray-100 rounded-xl p-2 bg-gray-50 custom-scroll">
                         <div id="new-band-members-list" class="space-y-1">
                             <!-- JSで生成 -->
@@ -929,20 +934,40 @@
         // New Band Modal
         window.openAddBandModal = () => {
             document.getElementById('new-band-name').value = "";
+            document.getElementById('new-band-member-search').value = ""; // 検索ボックスをクリア
             const membersList = document.getElementById('new-band-members-list');
+            
+            // メンバーリスト生成（検索用にdata属性を追加）
             membersList.innerHTML = usersData.map(user => `
-                <label class="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors">
-                    <input type="checkbox" value="${user.id}" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
-                    <div class="flex items-center gap-2">
-                        ${user.icon ? `<img src="${user.icon}" class="w-6 h-6 rounded-full object-cover">` : `<div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-500">${(user.name||"?")[0]}</div>`}
-                        <span class="text-xs font-bold text-gray-700">${user.name}</span>
-                        ${user.studentId ? `<span class="text-[10px] text-gray-400 font-mono">${user.studentId}</span>` : ''}
+                <label class="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors member-item" data-search="${(user.name||"").toLowerCase()} ${(user.kana||"").toLowerCase()}">
+                    <input type="checkbox" value="${user.id}" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300 flex-shrink-0">
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        ${user.icon ? `<img src="${user.icon}" class="w-6 h-6 rounded-full object-cover flex-shrink-0">` : `<div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-500 flex-shrink-0">${(user.name||"?")[0]}</div>`}
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-bold text-gray-700 leading-none truncate">${user.name}</p>
+                            <p class="text-[9px] text-gray-400 font-bold leading-none mt-0.5 truncate">${user.kana || ''}</p>
+                        </div>
+                        ${user.studentId ? `<span class="text-[10px] text-gray-400 font-mono ml-auto">${user.studentId}</span>` : ''}
                     </div>
                 </label>
             `).join('');
             document.getElementById('add-band-modal').classList.add('modal-active');
         };
         window.closeAddBandModal = () => document.getElementById('add-band-modal').classList.remove('modal-active');
+
+        // メンバー検索フィルタリング関数
+        window.handleMemberSearch = (val) => {
+            const q = val.toLowerCase();
+            const items = document.querySelectorAll('.member-item');
+            items.forEach(item => {
+                const searchData = item.getAttribute('data-search');
+                if (searchData.includes(q)) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        };
 
         const generateRandomId = (length) => {
             const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
