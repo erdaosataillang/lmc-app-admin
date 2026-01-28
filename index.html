@@ -507,7 +507,21 @@
         import { getFirestore, collection, doc, onSnapshot, updateDoc, setDoc, addDoc, deleteDoc, serverTimestamp, Timestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
         // Environment variables for Firebase
-        const firebaseConfig = JSON.parse(__firebase_config);
+        let firebaseConfig;
+        if (typeof __firebase_config !== 'undefined') {
+            firebaseConfig = JSON.parse(__firebase_config);
+        } else {
+            firebaseConfig = {
+                apiKey: "AIzaSyAWtITnn5uMOPBgOY0Bd7Rt5IN1ry8XoJI",
+                authDomain: "urakata-app.firebaseapp.com",
+                projectId: "urakata-app",
+                storageBucket: "urakata-app.firebasestorage.app",
+                messagingSenderId: "407777765696",
+                appId: "1:407777765696:web:045c2d94729022b4eab2a5",
+                measurementId: "G-9ZRMD26XNJ"
+            };
+        }
+        
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'lmc-admin-default';
 
         const app = initializeApp(firebaseConfig);
