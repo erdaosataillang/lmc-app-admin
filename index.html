@@ -145,16 +145,24 @@
             <div class="p-8 max-w-7xl mx-auto text-left">
                 <!-- 1. Dashboard Section -->
                 <section id="content-dashboard" class="tab-content active text-left">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 text-left">
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 text-left">
                         <div onclick="showTab('bands')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-users-rectangle text-[180px]"></i></div>
                             <div class="relative z-10">
                                 <div class="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-blue-600 transition-colors text-left"><i class="fa-solid fa-users-rectangle text-blue-600 group-hover:text-white text-3xl"></i></div>
-                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">バンドの管理</h3>
-                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed">全登録バンドの情報をリアルタイムで編集。メンバー構成や提出資料の管理を行います。</p>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">バンド</h3>
                                 <div class="flex items-center justify-between">
                                     <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-band-count">0</span> Bands</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div onclick="showTab('events')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
+                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-bullhorn text-[180px]"></i></div>
+                            <div class="relative z-10">
+                                <div class="w-16 h-16 bg-sky-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-sky-600 transition-colors text-left"><i class="fa-solid fa-bullhorn text-sky-600 group-hover:text-white text-3xl"></i></div>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">イベント</h3>
+                                <div class="flex items-center justify-between">
+                                    <span class="bg-sky-50 text-sky-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-event-count">0</span> Active</span>
                                 </div>
                             </div>
                         </div>
@@ -162,11 +170,9 @@
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity text-left"><i class="fa-solid fa-file-invoice text-[180px]"></i></div>
                             <div class="relative z-10 text-left">
                                 <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 transition-colors text-left"><i class="fa-solid fa-file-invoice text-emerald-600 group-hover:text-white text-3xl"></i></div>
-                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left">Cueシート確認</h3>
-                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left">提出されたPA・照明要望をチェック。セトリや機材配置を現場担当者と共有します。</p>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left">Cueシート</h3>
                                 <div class="flex items-center justify-between text-left">
-                                    <span class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-cue-count">0</span> Submitted</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
+                                    <span class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-cue-count">0</span> Files</span>
                                 </div>
                             </div>
                         </div>
@@ -174,11 +180,9 @@
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity text-left"><i class="fa-solid fa-user-gear text-[180px]"></i></div>
                             <div class="relative z-10 text-left">
                                 <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors text-left"><i class="fa-solid fa-user-gear text-indigo-600 group-hover:text-white text-3xl"></i></div>
-                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left">個人の管理</h3>
-                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left">部員名簿の閲覧、権限の設定、誕生日による現役生の自動判別・管理を行います。</p>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left">部員</h3>
                                 <div class="flex items-center justify-between text-left">
-                                    <span class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-user-count">0</span> Active Members</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors text-left"></i></div>
+                                    <span class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-user-count">0</span> Members</span>
                                 </div>
                             </div>
                         </div>
@@ -352,15 +356,18 @@
 
                 <!-- 7. Event Management Section -->
                 <section id="content-events" class="tab-content text-left">
-                    <div class="bg-white rounded-[32px] p-12 text-center border border-gray-100 shadow-sm">
-                        <div class="w-20 h-20 bg-sky-100 text-sky-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 text-4xl">
-                            <i class="fa-solid fa-bullhorn"></i>
+                    <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-8">
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-left">
+                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-sky-100 transition-all text-left">
+                                <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
+                                <input type="text" oninput="handleEventSearch(event)" placeholder="イベント名で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
+                            </div>
+                            <button onclick="openAddEventModal()" class="bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-sky-100 text-left">
+                                <i class="fa-solid fa-plus"></i> イベントを追加
+                            </button>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-800 mb-2">イベントの管理</h3>
-                        <p class="text-gray-400 font-bold text-xs uppercase tracking-widest mb-8">Event Management Panel</p>
-                        <div class="max-w-md mx-auto p-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                            <p class="text-sm text-gray-500 leading-relaxed">ライブイベント、定例会、合宿などのスケジューリングと参加確認機能を統合予定です。</p>
-                        </div>
+                    </div>
+                    <div id="events-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
                     </div>
                 </section>
             </div>
@@ -461,6 +468,25 @@
         </div>
     </div>
 
+    <!-- Event Modal -->
+    <div id="add-event-modal" onclick="closeAddEventModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
+            <button onclick="closeAddEventModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm text-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-black text-gray-800 mb-6 text-left">イベントの新規登録</h3>
+            <div class="space-y-6 text-left">
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">イベント名</label>
+                    <input type="text" id="new-event-name" placeholder="例: 25年5月定演" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-sky-100 transition-all text-left">
+                </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">開催日</label>
+                    <input type="date" id="new-event-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-sky-100 transition-all text-left">
+                </div>
+                <button id="event-submit-btn" onclick="handleNewEventSubmit()" class="w-full bg-sky-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-sky-700 transition-all shadow-xl shadow-sky-100 text-center">イベントを保存する</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Confirm Dialog Modal -->
     <div id="confirm-modal" onclick="closeConfirmModal()" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 text-left">
         <div onclick="event.stopPropagation()" class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center animate-in zoom-in duration-200">
@@ -489,11 +515,11 @@
         const db = getFirestore(app);
         const LIFF_ID = "2008162165-WaEbbUrr"; // User provided LIFF ID
 
-        let bandsData = [], cuesheetsData = [], usersData = [], bookingsData = [];
+        let bandsData = [], cuesheetsData = [], usersData = [], bookingsData = [], eventsData = [];
         let currentBookingSettings = { reservationMode: 'first_come', mode: 'manual', daysBefore: 7, time: '12:00' };
         let newBookingType = 'normal';
         let editingBookingId = null;
-        let bandSearchQuery = "", userSearchQuery = "", cueSearchQuery = "", userSortOrder = "name", reservationDateFilter = "";
+        let bandSearchQuery = "", userSearchQuery = "", cueSearchQuery = "", eventSearchQuery = "", userSortOrder = "name", reservationDateFilter = "";
         let userShowOnlyCurrent = true; 
 
         const tabInfo = {
@@ -503,7 +529,7 @@
             'users': { title: 'Members', desc: '部員名簿と検索・並び替え' },
             'reservation': { title: 'Booking', desc: 'スタジオ予約システム設定' },
             'fees': { title: 'Club Fee', desc: '部費の徴収・支出管理 (準備中)' },
-            'events': { title: 'Events', desc: 'ライブ・定例会などの管理 (準備中)' }
+            'events': { title: 'Events', desc: 'ライブ・定例会などの管理' }
         };
 
         // Paths following mandatory Rule 1
@@ -536,6 +562,7 @@
         window.handleBandSearch = (e) => { bandSearchQuery = e.target.value; renderBands(); };
         window.handleUserSearch = (e) => { userSearchQuery = e.target.value; renderUsers(); };
         window.handleCueSearch = (e) => { cueSearchQuery = e.target.value; renderCuesheets(); };
+        window.handleEventSearch = (e) => { eventSearchQuery = e.target.value; renderEvents(); };
         window.handleUserSort = (e) => { userSortOrder = e.target.value; renderUsers(); };
         window.handleResDateFilter = (e) => { reservationDateFilter = e.target.value; renderReservations(); };
         window.handleUserCurrentToggle = (e) => { userShowOnlyCurrent = e.target.checked; renderUsers(); };
@@ -547,7 +574,7 @@
 
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
-                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal();
+                closeUserDetail(); closeBandDetail(); closeAddCuesheetModal(); closeAddBookingModal(); closeConfirmModal(); closeAddEventModal();
             }
         });
 
@@ -567,7 +594,6 @@
                     const profile = await liff.getProfile();
                     updateUserProfileUI(profile);
                     
-                    // Auth Rule 3
                     if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
                         await signInWithCustomToken(auth, __initial_auth_token);
                     } else { 
@@ -578,7 +604,6 @@
                 }
             } catch (err) { 
                 console.error("LIFF Error:", err); 
-                // Fallback for non-LIFF environment testing
                 await signInAnonymously(auth);
             }
         }
@@ -611,7 +636,6 @@
             const dbStatus = document.getElementById('db-status');
             if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse text-left"></i> Connected';
 
-            // Real-time listeners (Rule 2: Fetch all, filter in memory)
             onSnapshot(publicPath('bands'), s => { 
                 bandsData = s.docs.map(d => ({id:d.id, ...d.data()})); 
                 renderBands(); updateStats(); populateBandSelects(); updateBandDropdown(); 
@@ -630,6 +654,11 @@
             onSnapshot(publicPath('cuesheets'), s => { 
                 cuesheetsData = s.docs.map(d => ({id:d.id, ...d.data()})); 
                 renderCuesheets(); updateStats(); 
+            }, e => console.error(e));
+
+            onSnapshot(publicPath('events'), s => { 
+                eventsData = s.docs.map(d => ({id:d.id, ...d.data()})); 
+                renderEvents(); updateStats(); 
             }, e => console.error(e));
 
             onSnapshot(publicDoc('system', 'settings'), s => { 
@@ -653,8 +682,7 @@
                 if (b.isArchived) return false;
                 const members = (b.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "").join(" ").toLowerCase();
                 const matchName = (b.name||"").toLowerCase().includes(q);
-                const matchId = (b.id||"").toLowerCase().includes(q);
-                return matchName || matchId || members.includes(q);
+                return matchName || members.includes(q);
             });
             container.innerHTML = filtered.map(band => {
                 const membersNames = (band.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "Unknown").join(', ');
@@ -699,6 +727,50 @@
             }).join('');
         };
 
+        window.renderEvents = () => {
+            const container = document.getElementById('events-grid-container');
+            if (!container) return;
+            const q = eventSearchQuery.toLowerCase();
+            const filtered = eventsData.filter(e => (e.event || "").toLowerCase().includes(q));
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full py-20 text-center text-gray-300 font-bold text-[10px] tracking-widest uppercase">No Events Found</div>`;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(evt => {
+                const dateId = evt.id.replace('e', '');
+                const year = dateId.substring(0, 4);
+                const month = dateId.substring(4, 6);
+                const day = dateId.substring(6, 8);
+                const dateStr = `${year}/${month}/${day}`;
+                
+                return `
+                <div class="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between text-left relative overflow-hidden">
+                    <div class="absolute -right-4 -top-4 opacity-[0.05] group-hover:opacity-[0.1] transition-opacity">
+                        <i class="fa-solid fa-bullhorn text-[100px]"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-12 h-12 bg-sky-100 rounded-2xl flex items-center justify-center text-sky-600">
+                                <i class="fa-solid fa-calendar-star"></i>
+                            </div>
+                            <div>
+                                <h4 class="text-xl font-black text-gray-800">${evt.event}</h4>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest">Date: ${dateStr}</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between mt-8 border-t border-gray-50 pt-4">
+                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">ID: ${evt.id}</span>
+                            <button onclick="requestDeleteEvent('${evt.id}')" class="w-10 h-10 rounded-full bg-red-50 text-red-400 hover:bg-red-600 hover:text-white transition-all flex items-center justify-center">
+                                <i class="fa-solid fa-trash-can text-sm"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
         window.renderUsers = () => {
             const container = document.getElementById('users-grid-container');
             if (!container) return;
@@ -707,7 +779,7 @@
             
             if (userShowOnlyCurrent) {
                 const cutoff = new Date();
-                cutoff.setFullYear(cutoff.getFullYear() - 4); // Simple logic for "current student"
+                cutoff.setFullYear(cutoff.getFullYear() - 4);
                 filtered = filtered.filter(u => {
                     if (!u.birthday) return true;
                     const d = u.birthday.toDate ? u.birthday.toDate() : (u.birthday.seconds ? new Date(u.birthday.seconds * 1000) : new Date(u.birthday));
@@ -753,10 +825,35 @@
                 </tr>`}).join('');
         };
 
-        // --- ADD CUE / BOOKING LOGIC ---
+        // --- Modals Logic ---
         window.openAddCuesheetModal = () => document.getElementById('add-cuesheet-modal').classList.add('modal-active');
         window.closeAddCuesheetModal = () => document.getElementById('add-cuesheet-modal').classList.remove('modal-active');
         
+        window.openAddEventModal = () => {
+            document.getElementById('new-event-name').value = "";
+            document.getElementById('new-event-date').value = "";
+            document.getElementById('add-event-modal').classList.add('modal-active');
+        };
+        window.closeAddEventModal = () => document.getElementById('add-event-modal').classList.remove('modal-active');
+
+        window.handleNewEventSubmit = async () => {
+            const name = document.getElementById('new-event-name').value;
+            const date = document.getElementById('new-event-date').value;
+            if(!name || !date) return;
+            
+            const docId = 'e' + date.replace(/-/g, '');
+            try {
+                await setDoc(publicDoc('events', docId), { event: name, date: date });
+                closeAddEventModal();
+            } catch (e) { console.error(e); }
+        };
+
+        window.requestDeleteEvent = (id) => {
+            openConfirmModal("このイベント情報を削除します。よろしいですか？", async () => {
+                await deleteDoc(publicDoc('events', id));
+            });
+        };
+
         window.openAddBookingModal = () => {
             editingBookingId = null;
             document.getElementById('booking-modal-title').innerText = "新規予約の登録";
@@ -777,20 +874,14 @@
             editingBookingId = id;
             document.getElementById('booking-modal-title').innerText = "予約内容の編集";
             document.getElementById('booking-submit-btn').innerText = "変更を保存する";
-            
             const band = bandsData.find(b => b.id === res.bandId);
             document.getElementById('new-booking-band-id').value = res.bandId;
             document.getElementById('band-selector-input').value = band ? band.name : (res.bandName || "");
-            
             const start = res.startTime ? (res.startTime.toDate ? res.startTime.toDate() : new Date(res.startTime.seconds * 1000)) : new Date();
             const end = res.endTime ? (res.endTime.toDate ? res.endTime.toDate() : new Date(res.endTime.seconds * 1000)) : null;
-            
             document.getElementById('new-booking-date').value = start.toISOString().split('T')[0];
             document.getElementById('new-booking-time').value = start.getHours().toString().padStart(2,'0') + ":" + start.getMinutes().toString().padStart(2,'0');
-            if(end) {
-                document.getElementById('new-booking-end-time').value = end.getHours().toString().padStart(2,'0') + ":" + end.getMinutes().toString().padStart(2,'0');
-            }
-            
+            if(end) document.getElementById('new-booking-end-time').value = end.getHours().toString().padStart(2,'0') + ":" + end.getMinutes().toString().padStart(2,'0');
             document.getElementById('new-booking-status').value = res.status || "pending";
             setNewBookingType(res.type || 'normal');
             document.getElementById('add-booking-modal').classList.add('modal-active');
@@ -858,7 +949,7 @@
             document.getElementById('band-dropdown-container').classList.add('hidden');
         };
 
-        // --- CONFIRM DIALOG LOGIC ---
+        // --- Confirmation ---
         let currentConfirmAction = null;
         window.openConfirmModal = (text, action) => {
             document.getElementById('confirm-modal-text').innerText = text;
@@ -913,11 +1004,9 @@
             const endTimeVal = document.getElementById('new-booking-end-time').value;
             const statusVal = document.getElementById('new-booking-status').value;
             if(!bandId || !dateVal || !timeVal || !endTimeVal) return;
-            
             const startDateTime = new Date(`${dateVal}T${timeVal}:00`);
             const endDateTime = new Date(`${dateVal}T${endTimeVal}:00`);
             const band = bandsData.find(b => b.id === bandId);
-            
             const payload = {
                 bandId,
                 bandName: band ? band.name : document.getElementById('band-selector-input').value,
@@ -926,18 +1015,14 @@
                 type: newBookingType,
                 status: statusVal
             };
-
             try {
-                if(editingBookingId) {
-                    await updateDoc(publicDoc('bookings', editingBookingId), payload);
-                } else {
-                    await addDoc(publicPath('bookings'), { ...payload, createdAt: serverTimestamp() });
-                }
+                if(editingBookingId) await updateDoc(publicDoc('bookings', editingBookingId), payload);
+                else await addDoc(publicPath('bookings'), { ...payload, createdAt: serverTimestamp() });
                 closeAddBookingModal();
             } catch (err) { console.error(err); }
         };
 
-        // --- DETAILS ---
+        // --- Details UI ---
         window.showBandDetail = (bandId) => {
             const band = bandsData.find(b => b.id === bandId);
             if (!band) return;
@@ -946,33 +1031,19 @@
             const modal = document.getElementById('band-detail-modal');
             const content = document.getElementById('band-modal-content');
             content.innerHTML = `
-                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full text-left"></div>
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full"></div>
                 <div class="px-8 pb-10 -mt-16 text-left relative">
-                    <div class="flex items-center gap-6 mb-8 text-left">
+                    <div class="flex items-center gap-6 mb-8">
                         <div class="relative">
                             <div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center overflow-hidden">
                                 ${band.icon ? `<img src="${band.icon}" class="w-full h-full object-cover">` : `<div class="text-4xl font-bold text-blue-500">${(band.name||"?")[0]}</div>`}
                             </div>
-                            <button class="absolute bottom-1 right-1 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center border-4 border-white shadow-lg"><i class="fa-solid fa-pen text-sm"></i></button>
                         </div>
-                        <div class="flex-1 pt-12 text-left">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-3xl font-extrabold text-gray-800">${band.name || '未設定'}</h3>
-                                <button class="bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-[10px] font-bold border border-gray-100 flex items-center gap-2"><i class="fa-solid fa-share-nodes"></i> 招待</button>
-                            </div>
-                            <div class="flex gap-3 mt-4">
-                                <div class="bg-white border border-gray-100 rounded-2xl px-6 py-2 shadow-sm text-center">
-                                    <p class="text-[14px] font-black text-blue-600">1</p>
-                                    <p class="text-[9px] text-gray-400 font-bold uppercase">演奏回数</p>
-                                </div>
-                                <div class="bg-white border border-gray-100 rounded-2xl px-6 py-2 shadow-sm text-center">
-                                    <p class="text-[14px] font-black text-blue-600">${bandSongs.length}</p>
-                                    <p class="text-[9px] text-gray-400 font-bold uppercase">演奏曲数</p>
-                                </div>
-                            </div>
+                        <div class="flex-1 pt-12">
+                            <h3 class="text-3xl font-extrabold text-gray-800">${band.name || '未設定'}</h3>
                         </div>
                     </div>
-                    <div class="space-y-4 mb-10 text-left">
+                    <div class="space-y-4 mb-10">
                         <div class="flex items-center gap-2 text-gray-400 mb-2">
                             <i class="fa-solid fa-users text-sm"></i>
                             <span class="text-[10px] font-extrabold uppercase tracking-widest">メンバー</span>
@@ -980,48 +1051,19 @@
                         <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
                             ${members.length > 0 ? members.map((m, idx) => `
                                 <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none">
-                                    ${m.icon ? `<img src="${m.icon}" class="w-12 h-12 rounded-2xl object-cover">` : `<div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-400 font-bold">${m.name[0]}</div>`}
-                                    <div class="flex-1 text-left">
+                                    <div class="flex-1">
                                         <div class="flex items-center gap-2">
                                             <span class="font-bold text-gray-800">${m.name}</span>
                                             ${idx === 0 ? `<span class="bg-blue-50 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-full uppercase">リーダー</span>` : ''}
                                         </div>
-                                        <p class="text-[10px] text-gray-400 font-bold">${m.part || 'Part Unset'}</p>
                                     </div>
-                                    <button class="px-3 py-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all text-[10px] font-bold border border-red-50">削除</button>
-                                </div>`).join('') : '<p class="p-8 text-center text-xs text-gray-300">メンバーが登録されていません</p>'}
-                            <button class="w-full py-4 text-blue-600 font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all text-center"><i class="fa-solid fa-user-plus"></i> メンバーを追加</button>
+                                </div>`).join('') : '<p class="p-8 text-center text-xs text-gray-300">登録なし</p>'}
                         </div>
                     </div>
-                    <div class="space-y-4 mb-10 text-left">
-                        <div class="flex items-center gap-2 text-gray-400 mb-2">
-                            <i class="fa-solid fa-music text-sm"></i>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest">演奏曲</span>
-                        </div>
-                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
-                            ${bandSongs.length > 0 ? bandSongs.map(song => `
-                                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none">
-                                    <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400"><i class="fa-solid fa-music text-xs"></i></div>
-                                    <div class="flex-1 text-left">
-                                        <p class="text-sm font-bold text-gray-800">${song.title || 'タイトル不明'}</p>
-                                        ${song.duration ? `<p class="text-[9px] text-gray-400 font-bold">${song.duration}</p>` : ''}
-                                    </div>
-                                    <button class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-300 hover:text-blue-600 transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                                </div>`).join('') : '<p class="p-8 text-center text-xs text-gray-300 font-bold">登録された曲はありません</p>'}
-                            <button class="w-full py-4 text-blue-600 font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all text-center"><i class="fa-solid fa-plus"></i> 曲を追加</button>
-                        </div>
-                    </div>
-                    <div class="pt-10 border-t border-gray-100 text-left">
-                         <div class="flex flex-col gap-4">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">バンド名の編集</label>
-                                <input type="text" id="edit-band-name" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800" value="${band.name || ''}">
-                            </div>
-                            <div class="flex gap-4">
-                                <button onclick="saveBandChanges('${band.id}')" class="flex-1 bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl">変更を保存</button>
-                                <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="px-6 border border-gray-100 rounded-[22px] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"><i class="fa-solid fa-box-archive"></i></button>
-                            </div>
-                         </div>
+                    <div class="pt-10 border-t border-gray-100">
+                        <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="w-full py-4 rounded-[22px] border border-gray-100 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all font-bold text-[11px] uppercase tracking-widest">
+                            <i class="fa-solid fa-box-archive mr-2"></i> ${band.isArchived ? 'アーカイブ解除' : 'アーカイブする'}
+                        </button>
                     </div>
                 </div>`;
             modal.classList.add('modal-active');
@@ -1046,19 +1088,8 @@
         window.closeUserDetail = () => document.getElementById('user-detail-modal').classList.remove('modal-active');
         window.closeBandDetail = () => document.getElementById('band-detail-modal').classList.remove('modal-active');
 
-        window.saveBandChanges = async (bandId) => {
-            const name = document.getElementById('edit-band-name').value;
-            try { 
-                await updateDoc(publicDoc('bands', bandId), { name }); 
-                closeBandDetail(); 
-            } catch (e) { console.error(e); }
-        };
-
         window.toggleBandArchive = async (bandId, current) => {
-            try { 
-                await updateDoc(publicDoc('bands', bandId), { isArchived: !current }); 
-                closeBandDetail(); 
-            } catch (e) { console.error(e); }
+            try { await updateDoc(publicDoc('bands', bandId), { isArchived: !current }); closeBandDetail(); } catch (e) { console.error(e); }
         };
 
         window.saveBookingSettings = async () => {
@@ -1073,10 +1104,11 @@
         };
 
         const updateStats = () => {
-            const b = document.getElementById('stat-band-count'), c = document.getElementById('stat-cue-count'), u = document.getElementById('stat-user-count');
+            const b = document.getElementById('stat-band-count'), c = document.getElementById('stat-cue-count'), u = document.getElementById('stat-user-count'), e = document.getElementById('stat-event-count');
             if(b) b.innerText = bandsData.filter(x => !x.isArchived).length;
             if(c) c.innerText = cuesheetsData.length;
             if(u) u.innerText = usersData.length;
+            if(e) e.innerText = eventsData.length;
         };
 
         const renderBookingSettingsUI = () => {
@@ -1084,7 +1116,6 @@
             const ltBtn = document.getElementById('mode-lottery');
             const ltPanel = document.getElementById('lottery-settings-panel');
             if(!fcBtn || !ltBtn) return;
-            
             if (currentBookingSettings.reservationMode === 'first_come') {
                 fcBtn.classList.add('bg-white', 'text-blue-600', 'shadow-sm');
                 ltBtn.classList.remove('bg-white', 'text-blue-600', 'shadow-sm');
@@ -1104,7 +1135,6 @@
             }
         });
 
-        // Initialize App on load
         window.addEventListener('load', initApp);
     </script>
 </body>
