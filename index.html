@@ -1057,45 +1057,114 @@
             const band = bandsData.find(b => b.id === bandId);
             if (!band) return;
             const members = (band.memberIds || []).map(id => usersData.find(u => u.id === id)).filter(u => u);
-            const bandSongs = band.songs || [];
+            const bandSongs = Array.isArray(band.songs) ? band.songs : [];
+            const performanceCount = bookingsData.filter(bk => bk.bandId === bandId && bk.status === 'confirmed').length;
+            const songCount = bandSongs.length;
+
             const modal = document.getElementById('band-detail-modal');
             const content = document.getElementById('band-modal-content');
+            
             content.innerHTML = `
-                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full"></div>
-                <div class="px-8 pb-10 -mt-16 text-left relative">
-                    <div class="flex items-center gap-6 mb-8">
-                        <div class="relative">
-                            <div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center overflow-hidden">
-                                ${band.icon ? `<img src="${band.icon}" class="w-full h-full object-cover">` : `<div class="text-4xl font-bold text-blue-500">${(band.name||"?")[0]}</div>`}
+                <div class="relative w-full">
+                    <div class="h-32 w-full bg-gradient-to-r from-slate-800 to-slate-900 relative overflow-hidden">
+                        <div class="absolute inset-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                    </div>
+                    
+                    <div class="px-6 pb-8 -mt-12 relative">
+                        <div class="flex flex-col items-center text-center mb-8">
+                            <div class="w-24 h-24 rounded-full border-4 border-white shadow-xl bg-white flex items-center justify-center overflow-hidden mb-3 relative group cursor-pointer">
+                                ${band.icon ? `<img src="${band.icon}" class="w-full h-full object-cover">` : `<div class="text-3xl font-bold text-slate-700">${(band.name||"?")[0]}</div>`}
+                                <div class="absolute inset-0 bg-black/30 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <i class="fa-solid fa-camera text-white"></i>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-2xl font-black text-gray-800 tracking-tight mb-4">${band.name || '未設定'}</h3>
+                            
+                            <div class="flex items-center justify-center gap-4 w-full mb-6">
+                                <div class="flex-1 bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex flex-col items-center">
+                                    <span class="text-blue-600 font-black text-lg">${performanceCount}</span>
+                                    <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">演奏回数</span>
+                                </div>
+                                <div class="flex-1 bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex flex-col items-center">
+                                    <span class="text-blue-600 font-black text-lg">${songCount}</span>
+                                    <span class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">演奏曲数</span>
+                                </div>
+                                <button class="flex-1 bg-gray-50 border border-gray-200 text-gray-500 rounded-2xl p-3 shadow-sm flex flex-col items-center justify-center hover:bg-gray-100 transition-colors">
+                                    <i class="fa-solid fa-share-nodes mb-1"></i>
+                                    <span class="text-[9px] font-bold uppercase tracking-widest">招待</span>
+                                </button>
                             </div>
                         </div>
-                        <div class="flex-1 pt-12">
-                            <h3 class="text-3xl font-extrabold text-gray-800">${band.name || '未設定'}</h3>
-                        </div>
-                    </div>
-                    <div class="space-y-4 mb-10">
-                        <div class="flex items-center gap-2 text-gray-400 mb-2">
-                            <i class="fa-solid fa-users text-sm"></i>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest">メンバー</span>
-                        </div>
-                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
-                            ${members.length > 0 ? members.map((m, idx) => `
-                                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none">
-                                    <div class="flex-1">
-                                        <div class="flex items-center gap-2">
-                                            <span class="font-bold text-gray-800">${m.name}</span>
-                                            ${idx === 0 ? `<span class="bg-blue-50 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-full uppercase">リーダー</span>` : ''}
+
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4 px-2">
+                                <h4 class="text-xs font-extrabold text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-users mr-2"></i>Members</h4>
+                            </div>
+                            <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+                                <div class="divide-y divide-gray-50">
+                                    ${members.length > 0 ? members.map((m, idx) => `
+                                        <div class="p-4 flex items-center gap-4">
+                                            ${m.icon ? `<img src="${m.icon}" class="w-12 h-12 rounded-full object-cover border border-gray-100">` : `<div class="w-12 h-12 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-500 font-bold border border-indigo-100">${m.name[0]}</div>`}
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-center gap-2 mb-0.5">
+                                                    <span class="font-bold text-gray-800 text-sm truncate">${m.name}</span>
+                                                    ${idx === 0 ? `<span class="bg-blue-100 text-blue-600 text-[9px] font-bold px-2 py-0.5 rounded-full">リーダー</span>` : ''}
+                                                </div>
+                                                <p class="text-[11px] text-gray-400 font-bold">${m.part || 'パート未設定'}</p>
+                                            </div>
+                                            <button class="px-3 py-1.5 border border-red-100 text-red-500 rounded-lg text-[10px] font-bold hover:bg-red-50 transition-colors">削除</button>
                                         </div>
-                                    </div>
-                                </div>`).join('') : '<p class="p-8 text-center text-xs text-gray-300">登録なし</p>'}
+                                    `).join('') : '<div class="p-6 text-center text-xs text-gray-400 font-bold">メンバーがいません</div>'}
+                                </div>
+                                <div class="p-2 border-t border-gray-50">
+                                    <button class="w-full py-3 text-blue-600 font-bold text-xs flex items-center justify-center gap-2 hover:bg-blue-50 rounded-xl transition-colors">
+                                        <i class="fa-solid fa-user-plus"></i> メンバーを追加
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-8">
+                            <div class="flex items-center justify-between mb-4 px-2">
+                                <h4 class="text-xs font-extrabold text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-music mr-2"></i>Setlist / Songs</h4>
+                            </div>
+                            <div class="bg-white rounded-[24px] border border-gray-100 shadow-sm overflow-hidden">
+                                <div class="divide-y divide-gray-50">
+                                    ${bandSongs.length > 0 ? bandSongs.map((song, idx) => `
+                                        <div class="p-4 flex items-center gap-4 group">
+                                            <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center text-gray-400 font-bold text-xs group-hover:bg-blue-50 group-hover:text-blue-500 transition-colors">
+                                                ${idx + 1}
+                                            </div>
+                                            <div class="flex-1 min-w-0">
+                                                <p class="font-bold text-gray-800 text-sm truncate">${song.title || 'タイトルなし'}</p>
+                                            </div>
+                                            <div class="text-right">
+                                                <span class="text-[11px] font-bold text-gray-400 bg-gray-50 px-2 py-1 rounded-md">${song.duration || '--:--'}</span>
+                                            </div>
+                                        </div>
+                                    `).join('') : '<div class="p-6 text-center text-xs text-gray-400 font-bold">登録された曲はありません</div>'}
+                                </div>
+                                <div class="p-2 border-t border-gray-50">
+                                    <button class="w-full py-3 text-blue-600 font-bold text-xs flex items-center justify-center gap-2 hover:bg-blue-50 rounded-xl transition-colors">
+                                        <i class="fa-solid fa-plus"></i> 曲を追加
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                             <button class="py-3.5 bg-gray-800 text-white rounded-2xl text-xs font-bold shadow-lg shadow-gray-200 hover:bg-gray-900 transition-all">
+                                編集する
+                             </button>
+                             <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="py-3.5 bg-white border border-gray-200 text-gray-500 rounded-2xl text-xs font-bold hover:bg-gray-50 transition-all">
+                                ${band.isArchived ? 'アーカイブ解除' : 'アーカイブ'}
+                             </button>
                         </div>
                     </div>
-                    <div class="pt-10 border-t border-gray-100">
-                        <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="w-full py-4 rounded-[22px] border border-gray-100 text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all font-bold text-[11px] uppercase tracking-widest">
-                            <i class="fa-solid fa-box-archive mr-2"></i> ${band.isArchived ? 'アーカイブ解除' : 'アーカイブする'}
-                        </button>
-                    </div>
-                </div>`;
+                </div>
+            `;
+            
             modal.classList.add('modal-active');
         };
 
