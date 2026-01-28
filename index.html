@@ -503,6 +503,14 @@
                     <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">バンド名</label>
                     <input type="text" id="new-band-name" placeholder="バンド名を入力" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
                 </div>
+                <div>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">メンバー選択</label>
+                    <div class="h-48 overflow-y-auto border border-gray-100 rounded-xl p-2 bg-gray-50 custom-scroll">
+                        <div id="new-band-members-list" class="space-y-1">
+                            <!-- JSで生成 -->
+                        </div>
+                    </div>
+                </div>
                 <button onclick="handleNewBandSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 text-center">作成する</button>
             </div>
         </div>
@@ -921,6 +929,17 @@
         // New Band Modal
         window.openAddBandModal = () => {
             document.getElementById('new-band-name').value = "";
+            const membersList = document.getElementById('new-band-members-list');
+            membersList.innerHTML = usersData.map(user => `
+                <label class="flex items-center gap-3 p-2 hover:bg-white rounded-lg cursor-pointer transition-colors">
+                    <input type="checkbox" value="${user.id}" class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-gray-300">
+                    <div class="flex items-center gap-2">
+                        ${user.icon ? `<img src="${user.icon}" class="w-6 h-6 rounded-full object-cover">` : `<div class="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-[10px] font-bold text-gray-500">${(user.name||"?")[0]}</div>`}
+                        <span class="text-xs font-bold text-gray-700">${user.name}</span>
+                        ${user.studentId ? `<span class="text-[10px] text-gray-400 font-mono">${user.studentId}</span>` : ''}
+                    </div>
+                </label>
+            `).join('');
             document.getElementById('add-band-modal').classList.add('modal-active');
         };
         window.closeAddBandModal = () => document.getElementById('add-band-modal').classList.remove('modal-active');
@@ -936,11 +955,14 @@
 
         window.handleNewBandSubmit = async () => {
             const name = document.getElementById('new-band-name').value;
+            const checkedBoxes = document.querySelectorAll('#new-band-members-list input[type="checkbox"]:checked');
+            const memberIds = Array.from(checkedBoxes).map(cb => cb.value);
+            
             if(!name) return;
             try {
                 await addDoc(publicPath('bands'), {
                     name: name,
-                    memberIds: [],
+                    memberIds: memberIds,
                     songs: [],
                     isArchived: false,
                     createdAt: serverTimestamp()
