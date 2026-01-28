@@ -17,7 +17,19 @@
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .nav-btn.active { color: #2563eb !important; background-color: #eff6ff !important; font-weight: 700 !important; }
+        
+        /* 基本のボタンカラー（非アクティブ時） */
+        .nav-btn { color: #64748b; transition: all 0.2s; }
+        .nav-btn:hover { background-color: #f1f5f9; color: #1e293b; }
+
+        /* メニュー別のアクティブカラー設定 */
+        .nav-btn.active#nav-dashboard { color: #2563eb !important; background-color: #eff6ff !important; font-weight: 700 !important; }
+        .nav-btn.active#nav-bands { color: #9333ea !important; background-color: #f5f3ff !important; font-weight: 700 !important; }
+        .nav-btn.active#nav-cuesheets { color: #db2777 !important; background-color: #fdf2f8 !important; font-weight: 700 !important; }
+        .nav-btn.active#nav-users { color: #1e3a8a !important; background-color: #eff6ff !important; font-weight: 700 !important; }
+        .nav-btn.active#nav-reservation { color: #dc2626 !important; background-color: #fef2f2 !important; font-weight: 700 !important; }
+        .nav-btn.active#nav-fees { color: #ea580c !important; background-color: #fff7ed !important; font-weight: 700 !important; }
+        .nav-btn.active#nav-events { color: #0ea5e9 !important; background-color: #f0f9ff !important; font-weight: 700 !important; }
         
         /* Toggle Switch Style */
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; }
@@ -51,7 +63,7 @@
             <h1 class="text-3xl font-extrabold tracking-tighter mb-2">LMC <span class="text-blue-600">Admin</span></h1>
             <p class="text-gray-400 font-bold text-xs uppercase tracking-[0.2em] mb-12">軽音学部管理システム</p>
             
-            <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8">
+            <div class="bg-gray-50 rounded-[32px] p-8 border border-gray-100 shadow-sm mb-8 text-center">
                 <p class="text-sm text-gray-500 leading-relaxed mb-8 font-medium">管理画面にアクセスするには<br>LINEアカウントでログインしてください。</p>
                 <button id="line-login-btn" class="w-full bg-[#06C755] hover:bg-[#05b34d] text-white py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-3 transition-all active:scale-[0.98] shadow-lg shadow-green-100">
                     <i class="fa-brands fa-line text-2xl"></i>
@@ -81,20 +93,26 @@
 
             <nav class="flex-1 px-4 space-y-1 overflow-y-auto">
                 <p class="text-[10px] font-extrabold text-gray-400 px-4 mb-3 uppercase tracking-widest">Main Menu</p>
-                <button onclick="showTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all duration-200 group">
-                    <i class="fa-solid fa-house w-6"></i><span class="ml-3 font-semibold">ダッシュボード</span>
+                <button onclick="showTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center p-3.5 rounded-2xl group">
+                    <i class="fa-solid fa-house w-6 text-center"></i><span class="ml-3 font-semibold text-sm">ダッシュボード</span>
                 </button>
-                <button onclick="showTab('bands')" id="nav-bands" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
-                    <i class="fa-solid fa-users-rectangle w-6"></i><span class="ml-3 font-semibold">バンドの管理</span>
+                <button onclick="showTab('bands')" id="nav-bands" class="nav-btn w-full flex items-center p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-users-rectangle w-6 text-center"></i><span class="ml-3 font-semibold text-sm">バンドの管理</span>
                 </button>
-                <button onclick="showTab('cuesheets')" id="nav-cuesheets" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
-                    <i class="fa-solid fa-file-invoice w-6"></i><span class="ml-3 font-semibold">Cueシートの確認</span>
+                <button onclick="showTab('cuesheets')" id="nav-cuesheets" class="nav-btn w-full flex items-center p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-file-invoice w-6 text-center"></i><span class="ml-3 font-semibold text-sm">Cueシートの確認</span>
                 </button>
-                <button onclick="showTab('users')" id="nav-users" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
-                    <i class="fa-solid fa-user-gear w-6"></i><span class="ml-3 font-semibold">個人の管理</span>
+                <button onclick="showTab('users')" id="nav-users" class="nav-btn w-full flex items-center p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-user-gear w-6 text-center"></i><span class="ml-3 font-semibold text-sm">個人の管理</span>
                 </button>
-                <button onclick="showTab('reservation')" id="nav-reservation" class="nav-btn w-full flex items-center p-3.5 text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-2xl transition-all">
-                    <i class="fa-solid fa-calendar-check w-6"></i><span class="ml-3 font-semibold">予約システム管理</span>
+                <button onclick="showTab('reservation')" id="nav-reservation" class="nav-btn w-full flex items-center p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-calendar-check w-6 text-center"></i><span class="ml-3 font-semibold text-sm">予約システム管理</span>
+                </button>
+                <button onclick="showTab('fees')" id="nav-fees" class="nav-btn w-full flex items-center p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-coins w-6 text-center"></i><span class="ml-3 font-semibold text-sm">部費の管理(仮)</span>
+                </button>
+                <button onclick="showTab('events')" id="nav-events" class="nav-btn w-full flex items-center p-3.5 rounded-2xl">
+                    <i class="fa-solid fa-bullhorn w-6 text-center"></i><span class="ml-3 font-semibold text-sm">イベントの管理</span>
                 </button>
             </nav>
 
@@ -114,7 +132,7 @@
 
         <!-- メインコンテンツ -->
         <main class="flex-1 ml-[260px] h-screen overflow-y-auto relative text-left">
-            <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-5 flex justify-between items-center">
+            <header class="sticky top-0 z-20 bg-white/80 backdrop-blur-md border-b border-gray-200 px-8 py-5 flex justify-between items-center text-left">
                 <div>
                     <h2 id="page-title" class="text-xl font-extrabold text-gray-800 uppercase tracking-widest">Dashboard</h2>
                     <p id="page-desc" class="text-[10px] text-gray-400 mt-1 font-bold uppercase tracking-wider">Loading status...</p>
@@ -126,7 +144,7 @@
 
             <div class="p-8 max-w-7xl mx-auto text-left">
                 <!-- 1. Dashboard Section -->
-                <section id="content-dashboard" class="tab-content active">
+                <section id="content-dashboard" class="tab-content active text-left">
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 text-left">
                         <div onclick="showTab('bands')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
                             <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-users-rectangle text-[180px]"></i></div>
@@ -135,32 +153,32 @@
                                 <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">バンドの管理</h3>
                                 <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed">全登録バンドの情報をリアルタイムで編集。メンバー構成や提出資料の管理を行います。</p>
                                 <div class="flex items-center justify-between">
-                                    <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest"><span id="stat-band-count">0</span> Bands</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
+                                    <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left"><span id="stat-band-count">0</span> Bands</span>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-blue-600 group-hover:border-blue-600 transition-colors text-left text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
                                 </div>
                             </div>
                         </div>
                         <div onclick="showTab('cuesheets')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
-                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity"><i class="fa-solid fa-file-invoice text-[180px]"></i></div>
-                            <div class="relative z-10">
-                                <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 transition-colors text-left text-left"><i class="fa-solid fa-file-invoice text-emerald-600 group-hover:text-white text-3xl"></i></div>
-                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight">Cueシート確認</h3>
-                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left text-left text-left">提出されたPA・照明要望をチェック。セトリや機材配置を現場担当者と共有します。</p>
-                                <div class="flex items-center justify-between">
-                                    <span class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left text-left text-left text-left"><span id="stat-cue-count">0</span> Submitted</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
+                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity text-left text-left"><i class="fa-solid fa-file-invoice text-[180px]"></i></div>
+                            <div class="relative z-10 text-left text-left">
+                                <div class="w-16 h-16 bg-emerald-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-emerald-600 transition-colors text-left text-left text-left"><i class="fa-solid fa-file-invoice text-emerald-600 group-hover:text-white text-3xl"></i></div>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left text-left text-left">Cueシート確認</h3>
+                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left text-left text-left text-left">提出されたPA・照明要望をチェック。セトリや機材配置を現場担当者と共有します。</p>
+                                <div class="flex items-center justify-between text-left text-left text-left">
+                                    <span class="bg-emerald-50 text-emerald-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left text-left text-left text-left text-left"><span id="stat-cue-count">0</span> Submitted</span>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 transition-colors text-left text-left text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors"></i></div>
                                 </div>
                             </div>
                         </div>
-                        <div onclick="showTab('users')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden">
-                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity text-left text-left text-left"><i class="fa-solid fa-user-gear text-[180px]"></i></div>
+                        <div onclick="showTab('users')" class="group relative bg-white p-8 rounded-[32px] shadow-sm border border-gray-100 hover:shadow-2xl hover:-translate-y-1 transition-all cursor-pointer overflow-hidden text-left">
+                            <div class="absolute -right-6 -top-6 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity text-left text-left text-left text-left"><i class="fa-solid fa-user-gear text-[180px]"></i></div>
                             <div class="relative z-10 text-left text-left">
-                                <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors text-left text-left text-left text-left text-left"><i class="fa-solid fa-user-gear text-indigo-600 group-hover:text-white text-3xl"></i></div>
-                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left text-left text-left text-left">個人の管理</h3>
-                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left text-left text-left text-left text-left">部員名簿の閲覧、権限の設定、誕生日による現役生の自動判別・管理を行います。</p>
-                                <div class="flex items-center justify-between text-left text-left text-left">
-                                    <span class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left text-left text-left text-left text-left text-left"><span id="stat-user-count">0</span> Active Members</span>
-                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-colors text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors text-left text-left text-left text-left text-left"></i></div>
+                                <div class="w-16 h-16 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-indigo-600 transition-colors text-left text-left text-left text-left text-left text-left text-left"><i class="fa-solid fa-user-gear text-indigo-600 group-hover:text-white text-3xl"></i></div>
+                                <h3 class="text-2xl font-extrabold text-gray-800 tracking-tight text-left text-left text-left text-left text-left">個人の管理</h3>
+                                <p class="text-gray-400 text-sm mt-2 mb-6 leading-relaxed text-left text-left text-left text-left text-left text-left">部員名簿の閲覧、権限の設定、誕生日による現役生の自動判別・管理を行います。</p>
+                                <div class="flex items-center justify-between text-left text-left text-left text-left">
+                                    <span class="bg-indigo-50 text-indigo-600 px-4 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest text-left text-left text-left text-left text-left text-left text-left text-left"><span id="stat-user-count">0</span> Active Members</span>
+                                    <div class="w-10 h-10 rounded-full border border-gray-100 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 transition-colors text-left text-left text-left text-left text-left"><i class="fa-solid fa-arrow-right text-gray-300 group-hover:text-white transition-colors text-left text-left text-left text-left text-left text-left"></i></div>
                                 </div>
                             </div>
                         </div>
@@ -175,7 +193,7 @@
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" oninput="handleBandSearch(event)" placeholder="バンド名・メンバー名・かな・IDで検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
                             </div>
-                            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest">
+                            <div class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">
                                 Bands Registry
                             </div>
                         </div>
@@ -184,14 +202,14 @@
                         <div class="overflow-x-auto text-left">
                             <table class="w-full text-left">
                                 <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50 text-left">
-                                    <tr class="text-left">
-                                        <th class="px-8 py-5 text-left">バンド名 / システムID</th>
-                                        <th class="px-8 py-5 text-left">メンバー構成</th>
-                                        <th class="px-8 py-5 text-left">Cueシート</th>
-                                        <th class="px-8 py-5 text-right">操作</th>
+                                    <tr class="text-left text-left">
+                                        <th class="px-8 py-5 text-left text-left">バンド名 / システムID</th>
+                                        <th class="px-8 py-5 text-left text-left">メンバー構成</th>
+                                        <th class="px-8 py-5 text-left text-left">Cueシート</th>
+                                        <th class="px-8 py-5 text-right text-right">操作</th>
                                     </tr>
                                 </thead>
-                                <tbody id="bands-list-body" class="text-sm">
+                                <tbody id="bands-list-body" class="text-sm text-left">
                                 </tbody>
                             </table>
                         </div>
@@ -199,42 +217,41 @@
                 </section>
 
                 <!-- 3. Cue Sheets Section -->
-                <section id="content-cuesheets" class="tab-content">
+                <section id="content-cuesheets" class="tab-content text-left">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-8">
-                        <div class="flex flex-wrap items-center justify-between gap-4">
-                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-emerald-100 transition-all">
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-left">
+                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-emerald-100 transition-all text-left">
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" oninput="handleCueSearch(event)" placeholder="バンド名で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
                             </div>
-                            <button onclick="openAddCuesheetModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-emerald-100">
+                            <button onclick="openAddCuesheetModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-emerald-100 text-left text-left">
                                 <i class="fa-solid fa-plus"></i> Cueシートを追加
                             </button>
                         </div>
                     </div>
-                    <div id="cuesheets-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <!-- 提出済みCueシートの一覧が入る -->
+                    <div id="cuesheets-list-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
                     </div>
                 </section>
 
                 <!-- 4. Users Section -->
                 <section id="content-users" class="tab-content text-left">
                     <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 mb-6">
-                        <div class="flex flex-wrap items-center justify-between gap-4 text-left">
-                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all">
+                        <div class="flex flex-wrap items-center justify-between gap-4 text-left text-left">
+                            <div class="flex flex-1 items-center gap-3 bg-gray-50 px-5 py-3 rounded-2xl max-w-md focus-within:ring-2 focus-within:ring-blue-100 transition-all text-left text-left">
                                 <i class="fa-solid fa-magnifying-glass text-gray-400"></i>
                                 <input type="text" oninput="handleUserSearch(event)" placeholder="名前・かな・学籍番号で検索..." class="bg-transparent border-none outline-none text-sm w-full font-bold placeholder:font-medium placeholder:text-gray-300">
                             </div>
-                            <div class="flex items-center gap-6">
-                                <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 shadow-sm">
-                                    <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest whitespace-nowrap">現役生のみ表示</span>
-                                    <label class="switch text-left">
+                            <div class="flex items-center gap-6 text-left text-left">
+                                <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100 shadow-sm text-left">
+                                    <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest whitespace-nowrap text-left text-left">現役生のみ表示</span>
+                                    <label class="switch text-left text-left">
                                         <input type="checkbox" id="user-current-toggle" onchange="handleUserCurrentToggle(event)" checked>
                                         <span class="slider"></span>
                                     </label>
                                 </div>
-                                <div class="flex items-center gap-2 text-left">
-                                    <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left">Sort:</span>
-                                    <select onchange="handleUserSort(event)" class="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-bold outline-none cursor-pointer hover:bg-gray-100 transition shadow-sm">
+                                <div class="flex items-center gap-2 text-left text-left text-left">
+                                    <span class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest text-left text-left text-left">Sort:</span>
+                                    <select onchange="handleUserSort(event)" class="bg-gray-50 border-none rounded-xl px-4 py-2 text-xs font-bold outline-none cursor-pointer hover:bg-gray-100 transition shadow-sm text-left text-left">
                                         <option value="name">名前順 (読み)</option>
                                         <option value="birthday">学年順 (誕生日)</option>
                                     </select>
@@ -242,7 +259,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="users-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left">
+                    <div id="users-grid-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-left text-left">
                     </div>
                 </section>
 
@@ -250,73 +267,99 @@
                 <section id="content-reservation" class="tab-content text-left">
                     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8 text-left">
                         <div class="lg:col-span-3 space-y-6 text-left">
-                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 flex flex-wrap items-center justify-between gap-4 text-left">
-                                <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl text-left">
+                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 p-6 flex flex-wrap items-center justify-between gap-4 text-left text-left text-left text-left">
+                                <div class="flex items-center gap-3 bg-gray-50 px-4 py-2 rounded-xl text-left text-left text-left text-left">
                                     <i class="fa-solid fa-filter text-gray-300 text-xs"></i>
                                     <input type="date" id="res-date-filter" onchange="handleResDateFilter(event)" class="bg-transparent border-none outline-none text-xs font-bold text-gray-600 cursor-pointer">
                                 </div>
-                                <div class="flex gap-3">
-                                    <button onclick="openAddBookingModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-blue-50">
+                                <div class="flex gap-3 text-left text-left">
+                                    <button onclick="openAddBookingModal()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all shadow-lg shadow-blue-50 text-left text-left text-left">
                                         <i class="fa-solid fa-plus"></i> 新規予約を追加
                                     </button>
-                                    <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest flex items-center">Live Booking Stream</p>
+                                    <p class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest flex items-center text-left text-left text-left text-left text-left text-left">Live Booking Stream</p>
                                 </div>
                             </div>
-                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden text-left">
+                            <div class="bg-white rounded-[28px] shadow-sm border border-gray-100 overflow-hidden text-left text-left text-left text-left text-left text-left">
                                 <table class="w-full text-left">
-                                    <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50 text-left">
-                                        <tr class="text-left">
-                                            <th class="px-8 py-5 text-left">バンド名</th>
-                                            <th class="px-8 py-5 text-left">日付</th>
-                                            <th class="px-8 py-5 text-left">予約時間</th>
-                                            <th class="px-8 py-5 text-left">タイプ</th>
-                                            <th class="px-8 py-5 text-right">状態 / 操作</th>
+                                    <thead class="text-gray-400 uppercase text-[9px] font-extrabold tracking-widest border-b border-gray-50 text-left text-left text-left text-left">
+                                        <tr class="text-left text-left text-left">
+                                            <th class="px-8 py-5 text-left text-left text-left text-left text-left">バンド名</th>
+                                            <th class="px-8 py-5 text-left text-left text-left text-left text-left">日付</th>
+                                            <th class="px-8 py-5 text-left text-left text-left text-left text-left text-left">予約時間</th>
+                                            <th class="px-8 py-5 text-left text-left text-left text-left text-left text-left">タイプ</th>
+                                            <th class="px-8 py-5 text-right text-right text-right text-right text-right text-right">状態 / 操作</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="reservations-list-body" class="text-sm">
+                                    <tbody id="reservations-list-body" class="text-sm text-left text-left">
                                     </tbody>
                                 </table>
                             </div>
                         </div>
-                        <div class="lg:col-span-1 space-y-6 text-left">
-                            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-left">
-                                <h4 class="font-extrabold text-gray-800 mb-6 uppercase text-xs tracking-[0.1em] border-b border-gray-50 pb-4 text-left">予約システム設定</h4>
-                                <div class="space-y-6 text-left">
+                        <div class="lg:col-span-1 space-y-6 text-left text-left">
+                            <div class="bg-white rounded-[32px] p-8 shadow-sm border border-gray-100 text-left text-left text-left text-left">
+                                <h4 class="font-extrabold text-gray-800 mb-6 uppercase text-xs tracking-[0.1em] border-b border-gray-50 pb-4 text-left text-left text-left text-left">予約システム設定</h4>
+                                <div class="space-y-6 text-left text-left text-left">
                                     <div>
-                                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left">予約受付モード</label>
-                                        <div class="flex bg-gray-100 p-1 rounded-2xl text-center">
-                                            <button onclick="updateBookingMode('first_come')" id="mode-first-come" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">先着順</button>
-                                            <button onclick="updateBookingMode('lottery')" id="mode-lottery" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">抽選制</button>
+                                        <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left text-left text-left text-left text-left">予約受付モード</label>
+                                        <div class="flex bg-gray-100 p-1 rounded-2xl text-center text-center text-center text-center">
+                                            <button onclick="updateBookingMode('first_come')" id="mode-first-come" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center text-center text-center">先着順</button>
+                                            <button onclick="updateBookingMode('lottery')" id="mode-lottery" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center text-center text-center">抽選制</button>
                                         </div>
                                     </div>
-
                                     <!-- 抽選制の詳細設定 -->
-                                    <div id="lottery-settings-panel" class="hidden space-y-6 border-t border-gray-50 pt-6 animate-in fade-in duration-300 text-left">
+                                    <div id="lottery-settings-panel" class="hidden space-y-6 border-t border-gray-50 pt-6 animate-in fade-in duration-300 text-left text-left text-left text-left text-left">
                                         <div>
-                                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left">抽選実行モード</label>
-                                            <div class="flex bg-gray-100 p-1 rounded-2xl text-center">
-                                                <button onclick="updateLotteryExecMode('auto')" id="exec-auto" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center">自動実行</button>
-                                                <button onclick="updateLotteryExecMode('manual')" id="exec-manual" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center text-center">手動実行</button>
+                                            <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-3 text-left text-left text-left text-left text-left">抽選実行モード</label>
+                                            <div class="flex bg-gray-100 p-1 rounded-2xl text-center text-center text-center text-center">
+                                                <button onclick="updateLotteryExecMode('auto')" id="exec-auto" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center text-center text-center">自動実行</button>
+                                                <button onclick="updateLotteryExecMode('manual')" id="exec-manual" class="flex-1 py-2 rounded-lg text-[9px] font-extrabold uppercase tracking-widest transition-all text-center text-center text-center text-center">手動実行</button>
                                             </div>
                                         </div>
-                                        <div id="auto-lottery-inputs" class="space-y-4 text-left">
+                                        <div id="auto-lottery-inputs" class="space-y-4 text-left text-left text-left text-left">
                                             <div>
-                                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left">実行タイミング (何日前)</label>
-                                                <div class="relative text-left">
-                                                    <input type="number" id="days-before" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left" placeholder="7">
-                                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400">日前</span>
+                                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left text-left text-left text-left">実行タイミング (何日前)</label>
+                                                <div class="relative text-left text-left text-left text-left">
+                                                    <input type="number" id="days-before" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left text-left text-left" placeholder="7">
+                                                    <span class="absolute right-4 top-1/2 -translate-y-1/2 text-[10px] font-bold text-gray-400 text-left text-left text-left">日前</span>
                                                 </div>
                                             </div>
                                             <div>
-                                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left">実行時間</label>
-                                                <input type="time" id="exec-time" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left">
+                                                <label class="block text-[10px] font-extrabold text-gray-400 uppercase tracking-widest mb-2 text-left text-left text-left">実行時間</label>
+                                                <input type="time" id="exec-time" class="w-full bg-gray-50 border-none rounded-xl px-4 py-3 text-xs font-bold outline-none text-left text-left text-left">
                                             </div>
                                         </div>
                                     </div>
-
-                                    <button onclick="saveBookingSettings()" class="w-full bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-gray-200 text-center">設定を保存する</button>
+                                    <button onclick="saveBookingSettings()" class="w-full bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl shadow-gray-200 text-center text-center text-center text-center text-center">設定を保存する</button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 6. Club Fee Section -->
+                <section id="content-fees" class="tab-content text-left">
+                    <div class="bg-white rounded-[32px] p-12 text-center border border-gray-100 shadow-sm">
+                        <div class="w-20 h-20 bg-orange-100 text-orange-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 text-4xl">
+                            <i class="fa-solid fa-coins"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-gray-800 mb-2">部費の管理 (仮)</h3>
+                        <p class="text-gray-400 font-bold text-xs uppercase tracking-widest mb-8">Club Fee Management - Development Stage</p>
+                        <div class="max-w-md mx-auto p-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                            <p class="text-sm text-gray-500 leading-relaxed">部費の徴収状況、支出管理、会計報告の自動化機能を準備中です。今しばらくお待ちください。</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 7. Event Management Section -->
+                <section id="content-events" class="tab-content text-left">
+                    <div class="bg-white rounded-[32px] p-12 text-center border border-gray-100 shadow-sm">
+                        <div class="w-20 h-20 bg-sky-100 text-sky-600 rounded-[24px] flex items-center justify-center mx-auto mb-6 text-4xl">
+                            <i class="fa-solid fa-bullhorn"></i>
+                        </div>
+                        <h3 class="text-2xl font-black text-gray-800 mb-2">イベントの管理</h3>
+                        <p class="text-gray-400 font-bold text-xs uppercase tracking-widest mb-8">Event Management Panel</p>
+                        <div class="max-w-md mx-auto p-6 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                            <p class="text-sm text-gray-500 leading-relaxed">ライブイベント、定例会、合宿などのスケジューリングと参加確認機能を統合予定です。</p>
                         </div>
                     </div>
                 </section>
@@ -324,129 +367,109 @@
         </main>
     </div>
 
-    <!-- Modals -->
-    <!-- User Detail Modal -->
-    <div id="user-detail-modal" onclick="closeUserDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left max-h-[90vh] flex flex-col">
-            <button onclick="closeUserDetail()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm text-center">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div id="user-modal-content" class="overflow-y-auto flex-1 p-0"></div>
+    <!-- Modals (Same as original) -->
+    <div id="user-detail-modal" onclick="closeUserDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-lg rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left max-h-[90vh] flex flex-col text-left">
+            <button onclick="closeUserDetail()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm text-center text-center"><i class="fa-solid fa-xmark"></i></button>
+            <div id="user-modal-content" class="overflow-y-auto flex-1 p-0 text-left"></div>
         </div>
     </div>
 
-    <!-- Band Detail/Edit Modal -->
-    <div id="band-detail-modal" onclick="closeBandDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left max-h-[90vh] flex flex-col">
-            <button onclick="closeBandDetail()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm text-center">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <div id="band-modal-content" class="overflow-y-auto flex-1 p-0 custom-scroll"></div>
+    <div id="band-detail-modal" onclick="closeBandDetail()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left text-left max-h-[90vh] flex flex-col text-left text-left">
+            <button onclick="closeBandDetail()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors z-20 shadow-sm text-center text-center text-center"><i class="fa-solid fa-xmark"></i></button>
+            <div id="band-modal-content" class="overflow-y-auto flex-1 p-0 custom-scroll text-left"></div>
         </div>
     </div>
 
-    <!-- New Cue Sheet Modal -->
-    <div id="add-cuesheet-modal" onclick="closeAddCuesheetModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
-            <button onclick="closeAddCuesheetModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <h3 class="text-xl font-black text-gray-800 mb-6">Cueシートの新規登録</h3>
-            <div class="space-y-6">
+    <!-- New Cue Sheet Modal (Same as original) -->
+    <div id="add-cuesheet-modal" onclick="closeAddCuesheetModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left text-left flex flex-col p-8 text-left text-left">
+            <button onclick="closeAddCuesheetModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm text-center text-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 class="text-xl font-black text-gray-800 mb-6 text-left">Cueシートの新規登録</h3>
+            <div class="space-y-6 text-left">
                 <div>
-                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">提出対象のバンド</label>
-                    <select id="new-cue-band-id" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-emerald-100 transition-all"></select>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">提出対象のバンド</label>
+                    <select id="new-cue-band-id" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-emerald-100 transition-all text-left"></select>
                 </div>
                 <div>
-                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">ファイル (PDF等)</label>
-                    <div class="relative w-full h-32 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-colors group">
-                        <i class="fa-solid fa-file-arrow-up text-gray-300 text-2xl group-hover:text-emerald-400 transition-colors"></i>
-                        <span id="file-name-label" class="text-xs font-bold text-gray-400">ファイルをタップして選択</span>
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">ファイル (PDF等)</label>
+                    <div class="relative w-full h-32 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center gap-2 hover:bg-gray-50 transition-colors group text-center text-center text-center">
+                        <i class="fa-solid fa-file-arrow-up text-gray-300 text-2xl group-hover:text-emerald-400 transition-colors text-center text-center text-center"></i>
+                        <span id="file-name-label" class="text-xs font-bold text-gray-400 text-center text-center text-center">ファイルをタップして選択</span>
                         <input type="file" id="new-cue-file" class="absolute inset-0 opacity-0 cursor-pointer" onchange="updateFileNameLabel(this)">
                     </div>
                 </div>
-                <button id="upload-cue-btn" onclick="handleNewCuesheetSubmit()" class="w-full bg-emerald-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100">登録を実行する</button>
+                <button id="upload-cue-btn" onclick="handleNewCuesheetSubmit()" class="w-full bg-emerald-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-emerald-700 transition-all shadow-xl shadow-emerald-100 text-center text-center text-center">登録を実行する</button>
             </div>
-            <div id="add-cuesheet-loader" class="uploading-overlay hidden flex-col gap-3">
-                <i class="fa-solid fa-spinner fa-spin text-emerald-600 text-3xl"></i>
-                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">Uploading...</span>
+            <div id="add-cuesheet-loader" class="uploading-overlay hidden flex-col gap-3 text-center text-center text-center">
+                <i class="fa-solid fa-spinner fa-spin text-emerald-600 text-3xl text-center text-center text-center"></i>
+                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest text-center text-center text-center text-center">Uploading...</span>
             </div>
         </div>
     </div>
 
-    <!-- Booking Modal (Create/Edit Combined) -->
-    <div id="add-booking-modal" onclick="closeAddBookingModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left flex flex-col p-8">
-            <button onclick="closeAddBookingModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-            <h3 id="booking-modal-title" class="text-xl font-black text-gray-800 mb-6">新規予約の登録</h3>
-            <div class="space-y-6">
-                <!-- 検索機能付きバンド選択 -->
-                <div class="space-y-2 relative">
-                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">予約バンド</label>
-                    <div class="relative">
-                        <input type="text" id="band-selector-input" autocomplete="off" 
-                               onfocus="toggleBandDropdown(true)" 
-                               oninput="filterBandsForDropdown(this.value)"
-                               placeholder="バンドを検索..." 
-                               class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
-                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none"></i>
+    <!-- Booking Modal (Same as original) -->
+    <div id="add-booking-modal" onclick="closeAddBookingModal()" class="hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-md rounded-[32px] shadow-2xl overflow-hidden relative animate-in fade-in zoom-in duration-200 text-left text-left flex flex-col p-8 text-left text-left">
+            <button onclick="closeAddBookingModal()" class="absolute top-4 right-4 w-10 h-10 bg-gray-100 hover:bg-gray-200 rounded-full flex items-center justify-center text-gray-500 transition-colors shadow-sm text-center text-center text-center"><i class="fa-solid fa-xmark"></i></button>
+            <h3 id="booking-modal-title" class="text-xl font-black text-gray-800 mb-6 text-left">新規予約の登録</h3>
+            <div class="space-y-6 text-left">
+                <div class="space-y-2 relative text-left">
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1 text-left">予約バンド</label>
+                    <div class="relative text-left">
+                        <input type="text" id="band-selector-input" autocomplete="off" onfocus="toggleBandDropdown(true)" oninput="filterBandsForDropdown(this.value)" placeholder="バンドを検索..." class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
+                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 pointer-events-none text-left"></i>
                     </div>
                     <input type="hidden" id="new-booking-band-id">
-                    <!-- ドロップダウンリスト -->
-                    <div id="band-dropdown-container" class="hidden absolute z-50 left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl max-h-48 overflow-y-auto custom-scroll">
-                        <ul id="band-dropdown-list" class="py-2"></ul>
+                    <div id="band-dropdown-container" class="hidden absolute z-50 left-0 right-0 top-full mt-2 bg-white border border-gray-100 rounded-2xl shadow-xl max-h-48 overflow-y-auto custom-scroll text-left">
+                        <ul id="band-dropdown-list" class="py-2 text-left"></ul>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">日付</label>
-                        <input type="date" id="new-booking-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="space-y-2 text-left">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1 text-left">日付</label>
+                        <input type="date" id="new-booking-date" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
                     </div>
-                    <div class="space-y-2">
-                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">ステータス</label>
-                        <select id="new-booking-status" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none">
+                    <div class="space-y-2 text-left">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1 text-left">ステータス</label>
+                        <select id="new-booking-status" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all appearance-none text-left">
                             <option value="pending">承認待ち (Pending)</option>
                             <option value="confirmed">確定済 (Confirmed)</option>
                         </select>
                     </div>
                 </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">開始時間</label>
-                        <input type="time" id="new-booking-time" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
+                <div class="grid grid-cols-2 gap-4 text-left">
+                    <div class="text-left">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">開始時間</label>
+                        <input type="time" id="new-booking-time" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
                     </div>
-                    <div>
-                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">終了時間</label>
-                        <input type="time" id="new-booking-end-time" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all">
-                    </div>
-                </div>
-                <div>
-                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2">予約タイプ</label>
-                    <div class="flex bg-gray-100 p-1 rounded-2xl">
-                        <button onclick="setNewBookingType('normal')" id="type-btn-normal" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all">練習(あわせ)</button>
-                        <button onclick="setNewBookingType('event')" id="type-btn-event" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all">イベント</button>
+                    <div class="text-left">
+                        <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left">終了時間</label>
+                        <input type="time" id="new-booking-end-time" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-blue-100 transition-all text-left">
                     </div>
                 </div>
-                <button id="booking-submit-btn" onclick="handleNewBookingSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">予約を保存する</button>
+                <div class="text-left">
+                    <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block mb-2 text-left text-left">予約タイプ</label>
+                    <div class="flex bg-gray-100 p-1 rounded-2xl text-center text-center">
+                        <button onclick="setNewBookingType('normal')" id="type-btn-normal" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">練習(あわせ)</button>
+                        <button onclick="setNewBookingType('event')" id="type-btn-event" class="flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest transition-all text-center">イベント</button>
+                    </div>
+                </div>
+                <button id="booking-submit-btn" onclick="handleNewBookingSubmit()" class="w-full bg-blue-600 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-blue-700 transition-all shadow-xl shadow-blue-100 text-center text-center text-center">予約を保存する</button>
             </div>
         </div>
     </div>
 
-    <!-- Confirm Dialog Modal -->
-    <div id="confirm-modal" onclick="closeConfirmModal()" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-        <div onclick="event.stopPropagation()" class="bg-white w-full max-sm rounded-[32px] p-8 shadow-2xl text-center animate-in zoom-in duration-200">
-            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                <i class="fa-solid fa-triangle-exclamation text-2xl"></i>
-            </div>
-            <h3 class="text-lg font-black text-gray-800 mb-2">本当に削除しますか？</h3>
-            <p id="confirm-modal-text" class="text-sm text-gray-500 mb-8 font-medium leading-relaxed">この操作は取り消すことができません。</p>
-            <div class="flex gap-4">
-                <button onclick="closeConfirmModal()" class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors">キャンセル</button>
-                <button id="confirm-action-btn" class="flex-1 py-4 bg-red-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-red-100 hover:bg-red-700 transition-all">削除を実行</button>
+    <!-- Confirm Dialog Modal (Same as original) -->
+    <div id="confirm-modal" onclick="closeConfirmModal()" class="hidden fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 text-left">
+        <div onclick="event.stopPropagation()" class="bg-white w-full max-w-sm rounded-[32px] p-8 shadow-2xl text-center animate-in zoom-in duration-200 text-center text-center">
+            <div class="w-16 h-16 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center mx-auto mb-6 text-center text-center text-center text-center text-center"><i class="fa-solid fa-triangle-exclamation text-2xl"></i></div>
+            <h3 class="text-lg font-black text-gray-800 mb-2 text-center text-center text-center">本当に削除しますか？</h3>
+            <p id="confirm-modal-text" class="text-sm text-gray-500 mb-8 font-medium leading-relaxed text-center text-center text-center">この操作は取り消すことができません。</p>
+            <div class="flex gap-4 text-center text-center text-center text-center text-center">
+                <button onclick="closeConfirmModal()" class="flex-1 py-4 text-sm font-bold text-gray-400 hover:text-gray-600 transition-colors text-center text-center">キャンセル</button>
+                <button id="confirm-action-btn" class="flex-1 py-4 bg-red-600 text-white rounded-2xl text-sm font-bold shadow-lg shadow-red-100 hover:bg-red-700 transition-all text-center text-center text-center">削除を実行</button>
             </div>
         </div>
     </div>
@@ -484,7 +507,9 @@
             'bands': { title: 'Bands', desc: '全バンドの編成・資料管理' },
             'cuesheets': { title: 'Cue Sheets', desc: 'PA・照明要望の承認確認' },
             'users': { title: 'Members', desc: '部員名簿と検索・並び替え' },
-            'reservation': { title: 'Booking', desc: 'スタジオ予約システム設定' }
+            'reservation': { title: 'Booking', desc: 'スタジオ予約システム設定' },
+            'fees': { title: 'Club Fee', desc: '部費の徴収・支出管理 (準備中)' },
+            'events': { title: 'Events', desc: 'ライブ・定例会などの管理 (準備中)' }
         };
 
         // --- Global Helpers ---
@@ -558,7 +583,7 @@
 
         function startDataListeners() {
             const dbStatus = document.getElementById('db-status');
-            if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse"></i> Connected';
+            if(dbStatus) dbStatus.innerHTML = '<i class="fa-solid fa-circle text-[8px] text-green-500 animate-pulse text-left text-left"></i> Connected';
 
             onSnapshot(collection(db, 'bands'), s => { bandsData = s.docs.map(d => ({id:d.id, ...d.data()})); renderBands(); updateStats(); populateBandSelects(); updateBandDropdown(); });
             onSnapshot(collection(db, 'users'), s => { usersData = s.docs.map(d => ({id:d.id, ...d.data()})); renderUsers(); renderBands(); updateStats(); });
@@ -597,14 +622,14 @@
             });
             container.innerHTML = filtered.map(band => {
                 const membersNames = (band.memberIds || []).map(id => usersData.find(u => u.id === id)?.name || "Unknown").join(', ');
-                return `<tr onclick="showBandDetail('${band.id}')" class="cursor-pointer hover:bg-gray-50 border-b border-gray-50 text-left">
-                    <td class="px-8 py-5 flex items-center gap-3">
-                        ${band.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-lg object-cover">` : `<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold">${(band.name || "?")[0]}</div>`}
-                        <div><span class="font-bold text-gray-800 block">${band.name || 'No Name'}</span><span class="text-[9px] text-gray-400 font-bold uppercase">ID: ${band.id.substring(0,8)}</span></div>
+                return `<tr onclick="showBandDetail('${band.id}')" class="cursor-pointer hover:bg-gray-50 border-b border-gray-50 text-left text-left text-left">
+                    <td class="px-8 py-5 flex items-center gap-3 text-left">
+                        ${band.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-lg object-cover text-left text-left">` : `<div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center text-blue-600 font-bold text-left text-left">${(band.name || "?")[0]}</div>`}
+                        <div class="text-left"><span class="font-bold text-gray-800 block text-left">${band.name || 'No Name'}</span><span class="text-[9px] text-gray-400 font-bold uppercase text-left text-left text-left text-left">ID: ${band.id.substring(0,8)}</span></div>
                     </td>
-                    <td class="px-8 py-5 text-xs text-gray-500 font-medium">${membersNames}</td>
-                    <td class="px-8 py-5 text-left">${band.latestCuesheetUrl ? `<a href="${band.latestCuesheetUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-200 transition gap-1.5" onclick="event.stopPropagation()"><i class="fa-solid fa-file-pdf"></i> 開く</a>` : `<span class="text-gray-300 text-[10px] font-bold">未提出</span>`}</td>
-                    <td class="px-8 py-5 text-right"><button class="text-blue-600 font-bold text-xs hover:underline">Detail</button></td>
+                    <td class="px-8 py-5 text-xs text-gray-500 font-medium text-left text-left text-left">${membersNames}</td>
+                    <td class="px-8 py-5 text-left text-left text-left">${band.latestCuesheetUrl ? `<a href="${band.latestCuesheetUrl}" target="_blank" class="inline-flex items-center px-3 py-1.5 bg-emerald-100 text-emerald-700 rounded-lg text-[10px] font-bold hover:bg-emerald-200 transition gap-1.5 text-left" onclick="event.stopPropagation()"><i class="fa-solid fa-file-pdf text-left"></i> 開く</a>` : `<span class="text-gray-300 text-[10px] font-bold text-left text-left text-left">未提出</span>`}</td>
+                    <td class="px-8 py-5 text-right text-right text-right"><button class="text-blue-600 font-bold text-xs hover:underline text-right text-right text-right text-right">Detail</button></td>
                 </tr>`}).join('');
         };
 
@@ -614,22 +639,22 @@
             const q = cueSearchQuery.toLowerCase();
             const filtered = cuesheetsData.filter(c => (c.bandName || "").toLowerCase().includes(q));
             if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full py-20 text-center text-gray-300 font-bold text-[10px] tracking-widest uppercase">No Cue Sheets Found</div>`;
+                container.innerHTML = `<div class="col-span-full py-20 text-center text-gray-300 font-bold text-[10px] tracking-widest uppercase text-center text-center text-center">No Cue Sheets Found</div>`;
                 return;
             }
             container.innerHTML = filtered.map(cue => {
                 const dateStr = cue.createdAt ? (typeof cue.createdAt.toDate === 'function' ? cue.createdAt.toDate() : new Date(cue.createdAt.seconds * 1000)).toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit'}) : '-';
                 const band = bandsData.find(b => b.id === cue.bandId);
                 return `
-                <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between">
-                    <div class="flex items-center gap-3 mb-4">
-                        ${band?.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-xl object-cover">` : `<div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 font-bold">${(cue.bandName||"?")[0]}</div>`}
-                        <div><h4 class="font-bold text-gray-800">${cue.bandName}</h4><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">提出日時: ${dateStr}</p></div>
+                <div class="bg-white p-6 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group flex flex-col justify-between text-left text-left">
+                    <div class="flex items-center gap-3 mb-4 text-left">
+                        ${band?.icon ? `<img src="${band.icon}" class="w-10 h-10 rounded-xl object-cover text-left text-left">` : `<div class="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center text-emerald-600 font-bold text-left text-left text-left">${(cue.bandName||"?")[0]}</div>`}
+                        <div class="text-left"><h4 class="font-bold text-gray-800 text-left text-left text-left">${cue.bandName}</h4><p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest text-left text-left text-left">提出日時: ${dateStr}</p></div>
                     </div>
-                    <div class="flex gap-2">
-                        <a href="${cue.fileUrl}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-600 text-center py-3 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all">表示</a>
-                        <button onclick="requestDeleteCue('${cue.id}')" class="w-12 h-12 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors">
-                            <i class="fa-solid fa-trash-can"></i>
+                    <div class="flex gap-2 text-center text-center text-center text-center">
+                        <a href="${cue.fileUrl}" target="_blank" class="flex-1 bg-emerald-50 text-emerald-600 text-center py-3 rounded-2xl text-[10px] font-extrabold uppercase tracking-widest hover:bg-emerald-600 hover:text-white transition-all text-center">表示</a>
+                        <button onclick="requestDeleteCue('${cue.id}')" class="w-12 h-12 flex items-center justify-center text-gray-300 hover:text-red-500 transition-colors text-center text-center">
+                            <i class="fa-solid fa-trash-can text-center text-center"></i>
                         </button>
                     </div>
                 </div>`;
@@ -650,9 +675,9 @@
                 });
             }
             filtered.sort((a,b) => userSortOrder === "name" ? (a.kana||a.name||"").localeCompare(b.kana||b.name||"","ja") : (a.birthday?.seconds||0) - (b.birthday?.seconds||0));
-            container.innerHTML = filtered.map(user => `<div onclick="showUserDetail('${user.id}')" class="cursor-pointer p-5 border border-gray-100 rounded-[28px] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-4 bg-white shadow-sm">
-                ${user.icon ? `<img src="${user.icon}" class="w-14 h-14 rounded-full object-cover">` : `<div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold">${(user.name||"?")[0]}</div>`}
-                <div class="flex-1 min-w-0"><h4 class="font-bold text-gray-800 truncate">${user.name}</h4><p class="text-[9px] text-gray-400 font-extrabold uppercase tracking-widest">${user.studentId || 'No ID'}</p></div></div>`).join('');
+            container.innerHTML = filtered.map(user => `<div onclick="showUserDetail('${user.id}')" class="cursor-pointer p-5 border border-gray-100 rounded-[28px] hover:shadow-xl hover:-translate-y-1 transition-all flex items-center gap-4 bg-white shadow-sm text-left">
+                ${user.icon ? `<img src="${user.icon}" class="w-14 h-14 rounded-full object-cover text-left">` : `<div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center text-indigo-600 font-bold text-left">${(user.name||"?")[0]}</div>`}
+                <div class="flex-1 min-w-0 text-left"><h4 class="font-bold text-gray-800 truncate text-left">${user.name}</h4><p class="text-[9px] text-gray-400 font-extrabold uppercase tracking-widest text-left text-left text-left">${user.studentId || 'No ID'}</p></div></div>`).join('');
         };
 
         window.renderReservations = () => {
@@ -669,15 +694,15 @@
                 const ds = s ? s.toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', weekday:'short'}) : '-';
                 const ts = s ? s.getHours() + ":" + String(s.getMinutes()).padStart(2,'0') : '--:--';
                 const te = e ? e.getHours() + ":" + String(e.getMinutes()).padStart(2,'0') : '--:--';
-                return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left">
-                    <td class="px-8 py-5 font-bold text-gray-800">${res.bandName || '不明'}</td>
-                    <td class="px-8 py-5 text-xs text-gray-600">${ds}</td>
-                    <td class="px-8 py-5 text-xs text-gray-600 font-bold">${ts} - ${te}</td>
-                    <td class="px-8 py-5"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold">${res.type==='normal'?'練習':'イベント'}</span></td>
-                    <td class="px-8 py-5 text-right flex items-center justify-end gap-3">
-                        <span class="text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'} mr-2">${res.status==='pending'?'承認待ち':'確定済'}</span>
-                        <button onclick="openEditBookingModal('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all"><i class="fa-solid fa-pen-to-square"></i></button>
-                        <button onclick="requestDeleteBooking('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all"><i class="fa-solid fa-trash-can"></i></button>
+                return `<tr class="hover:bg-gray-50 border-b border-gray-50 text-left text-left">
+                    <td class="px-8 py-5 font-bold text-gray-800 text-left text-left text-left">${res.bandName || '不明'}</td>
+                    <td class="px-8 py-5 text-xs text-gray-600 text-left text-left text-left">${ds}</td>
+                    <td class="px-8 py-5 text-xs text-gray-600 font-bold text-left text-left text-left">${ts} - ${te}</td>
+                    <td class="px-8 py-5 text-left text-left text-left text-left"><span class="px-2 py-1 ${res.type==='normal'?'text-blue-500 bg-blue-50':'text-purple-500 bg-purple-50'} rounded text-[10px] font-bold text-left text-left text-left">${res.type==='normal'?'練習':'イベント'}</span></td>
+                    <td class="px-8 py-5 text-right flex items-center justify-end gap-3 text-right text-right">
+                        <span class="text-[9px] font-bold uppercase ${res.status==='pending'?'text-orange-500':'text-green-500'} mr-2 text-right text-right text-right">${res.status==='pending'?'承認待ち':'確定'}</span>
+                        <button onclick="openEditBookingModal('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-all text-center text-center"><i class="fa-solid fa-pen-to-square text-center"></i></button>
+                        <button onclick="requestDeleteBooking('${res.id}')" class="w-8 h-8 rounded-lg bg-gray-50 text-gray-400 hover:text-red-600 hover:bg-red-50 transition-all text-center text-center"><i class="fa-solid fa-trash-can text-center text-center"></i></button>
                     </td>
                 </tr>`}).join('');
         };
@@ -732,11 +757,11 @@
             const nBtn = document.getElementById('type-btn-normal');
             const eBtn = document.getElementById('type-btn-event');
             if(type === 'normal') {
-                nBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest bg-white text-blue-600 shadow-sm transition-all";
-                eBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-gray-400 transition-all";
+                nBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest bg-white text-blue-600 shadow-sm transition-all text-center";
+                eBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-gray-400 transition-all text-center text-center";
             } else {
-                eBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest bg-white text-blue-600 shadow-sm transition-all";
-                nBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-gray-400 transition-all";
+                eBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest bg-white text-blue-600 shadow-sm transition-all text-center";
+                nBtn.className = "flex-1 py-2.5 rounded-xl text-[10px] font-extrabold uppercase tracking-widest text-gray-400 transition-all text-center text-center";
             }
         };
 
@@ -770,13 +795,13 @@
             if(!list) return;
             const filtered = bandsData.filter(b => !b.isArchived && (b.name||"").toLowerCase().includes(filter));
             if(filtered.length === 0) {
-                list.innerHTML = `<li class="px-5 py-3 text-[10px] font-bold text-gray-300 uppercase tracking-widest text-center">No Bands Found</li>`;
+                list.innerHTML = `<li class="px-5 py-3 text-[10px] font-bold text-gray-300 uppercase tracking-widest text-center text-center text-center">No Bands Found</li>`;
                 return;
             }
             list.innerHTML = filtered.map(b => `
-                <li onclick="selectBandForBooking('${b.id}', '${b.name.replace(/'/g, "\\'")}')" class="px-5 py-3 hover:bg-blue-50 cursor-pointer flex items-center gap-3 transition-all border-b border-gray-50 last:border-none">
-                    <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400">${(b.name||"?")[0]}</div>
-                    <span class="text-sm font-bold text-gray-700">${b.name}</span>
+                <li onclick="selectBandForBooking('${b.id}', '${b.name.replace(/'/g, "\\'")}')" class="px-5 py-3 hover:bg-blue-50 cursor-pointer flex items-center gap-3 transition-all border-b border-gray-50 last:border-none text-left">
+                    <div class="w-8 h-8 rounded-lg bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-400 text-left text-left text-left">${(b.name||"?")[0]}</div>
+                    <span class="text-sm font-bold text-gray-700 text-left">${b.name}</span>
                 </li>
             `).join('');
         };
@@ -868,148 +893,88 @@
         window.showBandDetail = (bandId) => {
             const band = bandsData.find(b => b.id === bandId);
             if (!band) return;
-            
-            // メンバーデータの取得
             const members = (band.memberIds || []).map(id => usersData.find(u => u.id === id)).filter(u => u);
-            
-            // 最新予約の取得（直近5件）
-            const bandBookings = bookingsData
-                .filter(bk => bk.bandId === bandId)
-                .sort((a,b) => (b.startTime?.seconds || 0) - (a.startTime?.seconds || 0))
-                .slice(0, 5);
-
-            // 演奏曲データの取得 (Firestore構造に対応)
+            const bandBookings = bookingsData.filter(bk => bk.bandId === bandId).sort((a,b) => (b.startTime?.seconds || 0) - (a.startTime?.seconds || 0)).slice(0, 5);
             const bandSongs = band.songs || [];
-
             const modal = document.getElementById('band-detail-modal');
             const content = document.getElementById('band-modal-content');
-            
             content.innerHTML = `
-                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full"></div>
-                <div class="px-8 pb-10 -mt-16 text-left relative">
-                    <!-- ヘッダー部 -->
-                    <div class="flex items-center gap-6 mb-8">
-                        <div class="relative">
-                            <div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center overflow-hidden">
-                                ${band.icon ? `<img src="${band.icon}" class="w-full h-full object-cover">` : `<div class="text-4xl font-bold text-blue-500">${(band.name||"?")[0]}</div>`}
+                <div class="bg-gradient-to-br from-blue-500 to-indigo-600 h-32 w-full text-left"></div>
+                <div class="px-8 pb-10 -mt-16 text-left relative text-left">
+                    <div class="flex items-center gap-6 mb-8 text-left">
+                        <div class="relative text-left">
+                            <div class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl bg-white flex items-center justify-center overflow-hidden text-left">
+                                ${band.icon ? `<img src="${band.icon}" class="w-full h-full object-cover text-left text-left">` : `<div class="text-4xl font-bold text-blue-500 text-left text-left">${(band.name||"?")[0]}</div>`}
                             </div>
-                            <button class="absolute bottom-1 right-1 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center border-4 border-white shadow-lg"><i class="fa-solid fa-pen text-sm"></i></button>
+                            <button class="absolute bottom-1 right-1 w-10 h-10 bg-blue-600 text-white rounded-full flex items-center justify-center border-4 border-white shadow-lg text-center"><i class="fa-solid fa-pen text-sm text-center"></i></button>
                         </div>
-                        <div class="flex-1 pt-12">
-                            <div class="flex items-center justify-between">
-                                <h3 class="text-3xl font-extrabold text-gray-800">${band.name || '未設定'}</h3>
-                                <button class="bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-[10px] font-bold border border-gray-100 flex items-center gap-2"><i class="fa-solid fa-share-nodes"></i> 招待</button>
+                        <div class="flex-1 pt-12 text-left">
+                            <div class="flex items-center justify-between text-left text-left">
+                                <h3 class="text-3xl font-extrabold text-gray-800 text-left text-left">${band.name || '未設定'}</h3>
+                                <button class="bg-gray-50 text-gray-500 px-4 py-2 rounded-xl text-[10px] font-bold border border-gray-100 flex items-center gap-2 text-left"><i class="fa-solid fa-share-nodes text-left"></i> 招待</button>
                             </div>
-                            <div class="flex gap-3 mt-4">
-                                <div class="bg-white border border-gray-100 rounded-2xl px-6 py-2 shadow-sm text-center">
-                                    <p class="text-[14px] font-black text-blue-600">1</p>
-                                    <p class="text-[9px] text-gray-400 font-bold uppercase">演奏回数</p>
+                            <div class="flex gap-3 mt-4 text-center text-center text-center">
+                                <div class="bg-white border border-gray-100 rounded-2xl px-6 py-2 shadow-sm text-center text-center text-center">
+                                    <p class="text-[14px] font-black text-blue-600 text-center">1</p>
+                                    <p class="text-[9px] text-gray-400 font-bold uppercase text-center">演奏回数</p>
                                 </div>
-                                <div class="bg-white border border-gray-100 rounded-2xl px-6 py-2 shadow-sm text-center">
-                                    <p class="text-[14px] font-black text-blue-600">${bandSongs.length}</p>
-                                    <p class="text-[9px] text-gray-400 font-bold uppercase">演奏曲数</p>
+                                <div class="bg-white border border-gray-100 rounded-2xl px-6 py-2 shadow-sm text-center text-center text-center">
+                                    <p class="text-[14px] font-black text-blue-600 text-center">${bandSongs.length}</p>
+                                    <p class="text-[9px] text-gray-400 font-bold uppercase text-center">演奏曲数</p>
                                 </div>
                             </div>
                         </div>
                     </div>
-
-                    <!-- メンバーセクション -->
-                    <div class="space-y-4 mb-10">
-                        <div class="flex items-center gap-2 text-gray-400 mb-2">
-                            <i class="fa-solid fa-users text-sm"></i>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest">メンバー</span>
+                    <div class="space-y-4 mb-10 text-left">
+                        <div class="flex items-center gap-2 text-gray-400 mb-2 text-left text-left">
+                            <i class="fa-solid fa-users text-sm text-left"></i>
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-left">メンバー</span>
                         </div>
-                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
+                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm text-left">
                             ${members.length > 0 ? members.map((m, idx) => `
-                                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none">
-                                    ${m.icon ? `<img src="${m.icon}" class="w-12 h-12 rounded-2xl object-cover">` : `<div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-400 font-bold">${m.name[0]}</div>`}
-                                    <div class="flex-1">
-                                        <div class="flex items-center gap-2">
-                                            <span class="font-bold text-gray-800">${m.name}</span>
-                                            ${idx === 0 ? `<span class="bg-blue-50 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-full uppercase">リーダー</span>` : ''}
+                                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none text-left">
+                                    ${m.icon ? `<img src="${m.icon}" class="w-12 h-12 rounded-2xl object-cover text-left">` : `<div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-400 font-bold text-left">${m.name[0]}</div>`}
+                                    <div class="flex-1 text-left text-left">
+                                        <div class="flex items-center gap-2 text-left">
+                                            <span class="font-bold text-gray-800 text-left">${m.name}</span>
+                                            ${idx === 0 ? `<span class="bg-blue-50 text-blue-600 text-[8px] font-black px-2 py-0.5 rounded-full uppercase text-center">リーダー</span>` : ''}
                                         </div>
-                                        <p class="text-[10px] text-gray-400 font-bold">${m.part || 'Part Unset'}</p>
+                                        <p class="text-[10px] text-gray-400 font-bold text-left text-left">${m.part || 'Part Unset'}</p>
                                     </div>
-                                    <button class="px-3 py-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all text-[10px] font-bold border border-red-50">削除</button>
-                                </div>
-                            `).join('') : '<p class="p-8 text-center text-xs text-gray-300">メンバーが登録されていません</p>'}
-                            <button class="w-full py-4 text-blue-600 font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all">
-                                <i class="fa-solid fa-user-plus"></i> メンバーを追加
-                            </button>
+                                    <button class="px-3 py-1.5 text-red-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all text-[10px] font-bold border border-red-50 text-center">削除</button>
+                                </div>`).join('') : '<p class="p-8 text-center text-xs text-gray-300 text-center text-center">メンバーが登録されていません</p>'}
+                            <button class="w-full py-4 text-blue-600 font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all text-center"><i class="fa-solid fa-user-plus text-center"></i> メンバーを追加</button>
                         </div>
                     </div>
-
-                    <!-- 演奏曲セクション -->
-                    <div class="space-y-4 mb-10">
-                        <div class="flex items-center gap-2 text-gray-400 mb-2">
-                            <i class="fa-solid fa-music text-sm"></i>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest">演奏曲</span>
+                    <!-- Songs Section -->
+                    <div class="space-y-4 mb-10 text-left">
+                        <div class="flex items-center gap-2 text-gray-400 mb-2 text-left">
+                            <i class="fa-solid fa-music text-sm text-left"></i>
+                            <span class="text-[10px] font-extrabold uppercase tracking-widest text-left">演奏曲</span>
                         </div>
-                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
+                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm text-left">
                             ${bandSongs.length > 0 ? bandSongs.map(song => `
-                                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none">
-                                    <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400">
-                                        <i class="fa-solid fa-music text-xs"></i>
+                                <div class="flex items-center gap-4 px-6 py-4 border-b border-gray-50 last:border-none text-left">
+                                    <div class="w-8 h-8 bg-gray-50 rounded-lg flex items-center justify-center text-gray-400 text-left"><i class="fa-solid fa-music text-xs text-left text-left"></i></div>
+                                    <div class="flex-1 text-left">
+                                        <p class="text-sm font-bold text-gray-800 text-left">${song.title || 'タイトル不明'}</p>
+                                        ${song.duration ? `<p class="text-[9px] text-gray-400 font-bold text-left text-left">${song.duration}</p>` : ''}
                                     </div>
-                                    <div class="flex-1">
-                                        <p class="text-sm font-bold text-gray-800">${song.title || 'タイトル不明'}</p>
-                                        ${song.duration ? `<p class="text-[9px] text-gray-400 font-bold">${song.duration}</p>` : ''}
-                                    </div>
-                                    <button class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-300 hover:text-blue-600 transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                                </div>
-                            `).join('') : '<p class="p-8 text-center text-xs text-gray-300 font-bold">登録された曲はありません</p>'}
-                            <button class="w-full py-4 text-blue-600 font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all">
-                                <i class="fa-solid fa-plus"></i> 曲を追加
-                            </button>
+                                    <button class="w-8 h-8 rounded-lg flex items-center justify-center text-gray-300 hover:text-blue-600 transition-colors text-center text-center"><i class="fa-solid fa-chevron-right text-xs text-center"></i></button>
+                                </div>`).join('') : '<p class="p-8 text-center text-xs text-gray-300 font-bold text-center text-center">登録された曲はありません</p>'}
+                            <button class="w-full py-4 text-blue-600 font-bold text-[11px] flex items-center justify-center gap-2 hover:bg-blue-50 transition-all text-center"><i class="fa-solid fa-plus text-center"></i> 曲を追加</button>
                         </div>
                     </div>
-
-                    <!-- 合わせ予約セクション -->
-                    <div class="space-y-4 mb-10">
-                        <div class="flex items-center gap-2 text-gray-400 mb-2">
-                            <i class="fa-solid fa-calendar-check text-sm"></i>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest">最近の合わせ予約</span>
-                        </div>
-                        <div class="bg-white border border-gray-100 rounded-[32px] overflow-hidden shadow-sm">
-                            ${bandBookings.length > 0 ? bandBookings.map(bk => {
-                                const s = bk.startTime ? (typeof bk.startTime.toDate === 'function' ? bk.startTime.toDate() : new Date(bk.startTime.seconds * 1000)) : new Date();
-                                return `
-                                    <div class="flex items-center justify-between px-6 py-4 border-b border-gray-50 last:border-none">
-                                        <div>
-                                            <p class="text-[11px] font-black text-gray-800">${s.toLocaleDateString('ja-JP', {month:'2-digit', day:'2-digit', weekday:'short'})}</p>
-                                            <p class="text-[9px] text-gray-400 font-bold">${s.getHours()}:${String(s.getMinutes()).padStart(2,'0')}〜</p>
-                                        </div>
-                                        <div class="flex items-center gap-3">
-                                            <span class="px-2 py-1 bg-gray-50 text-gray-400 rounded text-[8px] font-bold uppercase">${bk.status === 'pending' ? '承認待ち' : '確定'}</span>
-                                            <button class="w-8 h-8 rounded-full flex items-center justify-center text-gray-300 hover:text-blue-600 transition-colors"><i class="fa-solid fa-chevron-right text-xs"></i></button>
-                                        </div>
-                                    </div>
-                                `;
-                            }).join('') : '<p class="p-8 text-center text-xs text-gray-300">予約履歴がありません</p>'}
-                        </div>
-                    </div>
-
-                    <!-- 演奏記録セクション -->
-                    <div class="space-y-4 mb-10">
-                        <div class="flex items-center gap-2 text-gray-400 mb-2">
-                            <i class="fa-solid fa-clapperboard text-sm"></i>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest">演奏記録</span>
-                        </div>
-                        <div class="bg-white border border-gray-100 rounded-[32px] p-8 text-center shadow-sm">
-                            <p class="text-xs text-gray-300 font-bold">演奏記録はありません</p>
-                        </div>
-                    </div>
-
-                    <!-- バンド設定（アーカイブ等） -->
-                    <div class="pt-10 border-t border-gray-100">
-                         <div class="flex flex-col gap-4">
-                            <div class="space-y-2">
-                                <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1">バンド名の編集</label>
-                                <input type="text" id="edit-band-name" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800" value="${band.name || ''}">
+                    <!-- Other sections (Placeholder) -->
+                    <div class="pt-10 border-t border-gray-100 text-left">
+                         <div class="flex flex-col gap-4 text-left">
+                            <div class="space-y-2 text-left">
+                                <label class="text-[10px] font-extrabold text-gray-400 uppercase tracking-widest block ml-1 text-left text-left">バンド名の編集</label>
+                                <input type="text" id="edit-band-name" class="w-full bg-gray-50 border border-gray-100 rounded-xl px-4 py-3 font-bold text-gray-800 text-left" value="${band.name || ''}">
                             </div>
-                            <div class="flex gap-4">
-                                <button onclick="saveBandChanges('${band.id}')" class="flex-1 bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl">変更を保存</button>
-                                <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="px-6 border border-gray-100 rounded-[22px] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all"><i class="fa-solid fa-box-archive"></i></button>
+                            <div class="flex gap-4 text-center">
+                                <button onclick="saveBandChanges('${band.id}')" class="flex-1 bg-gray-900 text-white py-4 rounded-[22px] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-black transition-all shadow-xl text-center">変更を保存</button>
+                                <button onclick="toggleBandArchive('${band.id}', ${band.isArchived})" class="px-6 border border-gray-100 rounded-[22px] text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all text-center"><i class="fa-solid fa-box-archive text-center text-center"></i></button>
                             </div>
                          </div>
                     </div>
@@ -1022,7 +987,7 @@
             if (!user) return;
             const modal = document.getElementById('user-detail-modal');
             const content = document.getElementById('user-modal-content');
-            content.innerHTML = `<div class="bg-gradient-to-br from-indigo-500 to-blue-600 h-32 w-full"></div><div class="px-8 pb-10 -mt-16 text-left"><div class="relative mb-6">${user.icon ? `<img src="${user.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl">` : `<div class="w-32 h-32 rounded-[40px] bg-white flex items-center justify-center text-4xl font-bold text-indigo-100">${(user.name||"?")[0]}</div>`}</div><h3 class="text-3xl font-extrabold text-gray-800">${user.name}</h3></div>`;
+            content.innerHTML = `<div class="bg-gradient-to-br from-indigo-500 to-blue-600 h-32 w-full text-left"></div><div class="px-8 pb-10 -mt-16 text-left text-left text-left"><div class="relative mb-6 text-left">${user.icon ? `<img src="${user.icon}" class="w-32 h-32 rounded-[40px] border-[6px] border-white shadow-xl text-left">` : `<div class="w-32 h-32 rounded-[40px] bg-white flex items-center justify-center text-4xl font-bold text-indigo-100 text-left text-left">${(user.name||"?")[0]}</div>`}</div><h3 class="text-3xl font-extrabold text-gray-800 text-left text-left">${user.name}</h3></div>`;
             modal.classList.add('modal-active');
         };
 
@@ -1057,17 +1022,16 @@
             const ltPanel = document.getElementById('lottery-settings-panel');
             if(!fcBtn || !ltBtn) return;
             if (currentBookingSettings.reservationMode === 'first_come') {
-                fcBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold shadow-sm text-center";
-                ltBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold text-center";
+                fcBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold shadow-sm text-center text-center";
+                ltBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold text-center text-center text-center";
                 ltPanel.classList.add('hidden');
             } else {
-                ltBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold shadow-sm text-center";
-                fcBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold text-center";
+                ltBtn.className = "flex-1 bg-white text-blue-600 py-2.5 rounded-xl text-[10px] font-extrabold shadow-sm text-center text-center";
+                fcBtn.className = "flex-1 text-gray-400 py-2.5 rounded-xl text-[10px] font-extrabold text-center text-center text-center";
                 ltPanel.classList.remove('hidden');
             }
         };
 
-        // 外側をクリックしたらドロップダウンを閉じる
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#band-selector-input')) {
                 document.getElementById('band-dropdown-container')?.classList.add('hidden');
